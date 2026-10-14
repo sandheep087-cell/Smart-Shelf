@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * REST controller for Smart Shelf operations.
+ */
 @RestController
 @RequestMapping("/api/shelf")
 @CrossOrigin(origins = "*")
@@ -237,6 +240,7 @@ public class ShelfController {
                 itemMap.put("adjustedPrice", evaluation.get("adjustedPrice"));
                 itemMap.put("discountPercentage", discount);
                 itemMap.put("riskScore", evaluation.get("riskScore"));
+                itemMap.put("imageUrl", item.getProduct() != null ? item.getProduct().getImageUrl() : "");
                 discountedItems.add(itemMap);
             }
         }

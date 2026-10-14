@@ -1,0 +1,452 @@
+[
+    {
+        "name":  "Brioche Loaf",
+        "category":  "Bread",
+        "basePrice":  6.5,
+        "shelfLifeDays":  3,
+        "imageUrl":  "https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=600\u0026q=80",
+        "quantity":  0,
+        "status":  "EXPIRED"
+    },
+    {
+        "name":  "Walnut Brownie",
+        "category":  "Brownie",
+        "basePrice":  3.5,
+        "shelfLifeDays":  5,
+        "imageUrl":  "https://images.unsplash.com/photo-1587314168485-3236d6710814?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Ciabatta Loaf",
+        "category":  "Bread",
+        "basePrice":  4.5,
+        "shelfLifeDays":  3,
+        "imageUrl":  "https://images.unsplash.com/photo-1614959145657-3f3366c05ff8?w=600\u0026q=80",
+        "quantity":  0,
+        "status":  "EXPIRED"
+    },
+    {
+        "name":  "Blondie Salted Caramel Bar",
+        "category":  "Bar",
+        "basePrice":  3.4,
+        "shelfLifeDays":  5,
+        "imageUrl":  "https://images.unsplash.com/photo-1624467540209-4bf9d1209b53?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Artisan Sourdough Loaf",
+        "category":  "Bread",
+        "basePrice":  6.0,
+        "shelfLifeDays":  3,
+        "imageUrl":  "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600\u0026q=80",
+        "quantity":  0,
+        "status":  "EXPIRED"
+    },
+    {
+        "name":  "Lemon Curd Bar",
+        "category":  "Bar",
+        "basePrice":  3.2,
+        "shelfLifeDays":  5,
+        "imageUrl":  "https://images.unsplash.com/photo-1610444589332-957262ba99a1?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Apple Turnover",
+        "category":  "Pastry",
+        "basePrice":  3.25,
+        "shelfLifeDays":  1,
+        "imageUrl":  "https://images.unsplash.com/photo-1600857544200-b2f666a9a2ec?w=600\u0026q=80",
+        "quantity":  0,
+        "status":  "EXPIRED"
+    },
+    {
+        "name":  "Classic French Baguette",
+        "category":  "Bread",
+        "basePrice":  3.0,
+        "shelfLifeDays":  3,
+        "imageUrl":  "https://images.unsplash.com/photo-1549903072-7e6e0d654a1a?w=600\u0026q=80",
+        "quantity":  0,
+        "status":  "EXPIRED"
+    },
+    {
+        "name":  "Pecan Bar",
+        "category":  "Bar",
+        "basePrice":  3.6,
+        "shelfLifeDays":  5,
+        "imageUrl":  "https://images.unsplash.com/photo-1514517220017-8ce97a34a7b6?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Veg Puff",
+        "category":  "Savory",
+        "basePrice":  4.0,
+        "shelfLifeDays":  1,
+        "imageUrl":  "https://images.unsplash.com/photo-1600326145359-3a44909d1a39?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Raspberry Crown",
+        "category":  "Pastry",
+        "basePrice":  3.6,
+        "shelfLifeDays":  1,
+        "imageUrl":  "https://images.unsplash.com/photo-1563717208154-1eb31a89d0df?w=600\u0026q=80",
+        "quantity":  0,
+        "status":  "EXPIRED"
+    },
+    {
+        "name":  "Whole Wheat Multigrain Loaf",
+        "category":  "Bread",
+        "basePrice":  5.5,
+        "shelfLifeDays":  3,
+        "imageUrl":  "https://images.unsplash.com/photo-1586444248902-2f64eddc13df?w=600\u0026q=80",
+        "quantity":  0,
+        "status":  "EXPIRED"
+    },
+    {
+        "name":  "Egg Puff",
+        "category":  "Savory",
+        "basePrice":  4.5,
+        "shelfLifeDays":  1,
+        "imageUrl":  "https://images.unsplash.com/photo-1550507992-eb63ffee0847?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Chicken Puff",
+        "category":  "Savory",
+        "basePrice":  5.0,
+        "shelfLifeDays":  1,
+        "imageUrl":  "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Veg Roll",
+        "category":  "Savory",
+        "basePrice":  4.0,
+        "shelfLifeDays":  1,
+        "imageUrl":  "https://images.unsplash.com/photo-1544025162-d76694265947?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Cinnamon Roll",
+        "category":  "Pastry",
+        "basePrice":  4.0,
+        "shelfLifeDays":  1,
+        "imageUrl":  "https://images.unsplash.com/photo-1509365465985-25d11c17e812?w=600\u0026q=80",
+        "quantity":  0,
+        "status":  "EXPIRED"
+    },
+    {
+        "name":  "Chocolate Croissant (Pain au Chocolat)",
+        "category":  "Pastry",
+        "basePrice":  3.75,
+        "shelfLifeDays":  1,
+        "imageUrl":  "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600\u0026q=80",
+        "quantity":  0,
+        "status":  "EXPIRED"
+    },
+    {
+        "name":  "Chicken Roll",
+        "category":  "Savory",
+        "basePrice":  5.0,
+        "shelfLifeDays":  1,
+        "imageUrl":  "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Pain aux Raisins",
+        "category":  "Pastry",
+        "basePrice":  3.4,
+        "shelfLifeDays":  1,
+        "imageUrl":  "https://images.unsplash.com/photo-1624372957169-df42718cd7c5?w=600\u0026q=80",
+        "quantity":  0,
+        "status":  "EXPIRED"
+    },
+    {
+        "name":  "Spinach \u0026 Feta Quiche",
+        "category":  "Savory",
+        "basePrice":  5.5,
+        "shelfLifeDays":  1,
+        "imageUrl":  "https://images.unsplash.com/photo-1494850381669-e39062325902?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Cherry Strudel",
+        "category":  "Pastry",
+        "basePrice":  3.8,
+        "shelfLifeDays":  1,
+        "imageUrl":  "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600\u0026q=80",
+        "quantity":  0,
+        "status":  "EXPIRED"
+    },
+    {
+        "name":  "Pecan Maple Danish",
+        "category":  "Pastry",
+        "basePrice":  3.9,
+        "shelfLifeDays":  1,
+        "imageUrl":  "https://images.unsplash.com/photo-1628198754117-0624021295b9?w=600\u0026q=80",
+        "quantity":  0,
+        "status":  "EXPIRED"
+    },
+    {
+        "name":  "Bacon \u0026 Mushroom Quiche",
+        "category":  "Savory",
+        "basePrice":  5.8,
+        "shelfLifeDays":  1,
+        "imageUrl":  "https://images.unsplash.com/photo-1592323719011-370c9ddf09e2?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Hot Chocolate",
+        "category":  "Beverage",
+        "basePrice":  5.0,
+        "shelfLifeDays":  1,
+        "imageUrl":  "https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Caramel Macchiato",
+        "category":  "Beverage",
+        "basePrice":  4.5,
+        "shelfLifeDays":  1,
+        "imageUrl":  "https://images.unsplash.com/photo-1485808191679-5f86510681a2?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Pumpernickel Bread",
+        "category":  "Bread",
+        "basePrice":  5.2,
+        "shelfLifeDays":  3,
+        "imageUrl":  "https://images.unsplash.com/photo-1589367920969-ab8e050eb0e9?w=600\u0026q=80",
+        "quantity":  0,
+        "status":  "EXPIRED"
+    },
+    {
+        "name":  "Garlic Herb Loaf",
+        "category":  "Bread",
+        "basePrice":  4.8,
+        "shelfLifeDays":  3,
+        "imageUrl":  "https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?w=600\u0026q=80",
+        "quantity":  0,
+        "status":  "EXPIRED"
+    },
+    {
+        "name":  "Cold Brew Coffee",
+        "category":  "Beverage",
+        "basePrice":  4.0,
+        "shelfLifeDays":  1,
+        "imageUrl":  "https://images.unsplash.com/photo-1461023058943-0708e5264024?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Almond Croissant",
+        "category":  "Pastry",
+        "basePrice":  3.5,
+        "shelfLifeDays":  1,
+        "imageUrl":  "https://images.unsplash.com/photo-1509365465985-25d11c17e812?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Blueberry Danish",
+        "category":  "Pastry",
+        "basePrice":  3.5,
+        "shelfLifeDays":  1,
+        "imageUrl":  "https://images.unsplash.com/photo-1606353974488-066ebbc58b29?w=600\u0026q=80",
+        "quantity":  0,
+        "status":  "EXPIRED"
+    },
+    {
+        "name":  "Lemon Drizzle Cake Slice",
+        "category":  "Cake",
+        "basePrice":  3.8,
+        "shelfLifeDays":  2,
+        "imageUrl":  "https://images.unsplash.com/photo-1582293041079-7814c271e549?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Chocolate Chip Muffin",
+        "category":  "Muffin",
+        "basePrice":  2.75,
+        "shelfLifeDays":  2,
+        "imageUrl":  "https://images.unsplash.com/photo-1607958996333-41aef7caefaa?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Red Velvet Cake Slice",
+        "category":  "Cake",
+        "basePrice":  4.75,
+        "shelfLifeDays":  2,
+        "imageUrl":  "https://images.unsplash.com/photo-1614588820427-463d11b33036?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Carrot Cake Slice",
+        "category":  "Cake",
+        "basePrice":  4.25,
+        "shelfLifeDays":  2,
+        "imageUrl":  "https://images.unsplash.com/photo-1624009712061-f033a7f80db9?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "New York Cheesecake Slice",
+        "category":  "Cake",
+        "basePrice":  5.0,
+        "shelfLifeDays":  2,
+        "imageUrl":  "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Tiramisu Cup",
+        "category":  "Dessert",
+        "basePrice":  5.5,
+        "shelfLifeDays":  2,
+        "imageUrl":  "https://images.unsplash.com/photo-1571115177098-24db0d4e4fd8?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Blueberry Streusel Muffin",
+        "category":  "Muffin",
+        "basePrice":  2.85,
+        "shelfLifeDays":  2,
+        "imageUrl":  "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Double Chocolate Muffin",
+        "category":  "Muffin",
+        "basePrice":  2.95,
+        "shelfLifeDays":  2,
+        "imageUrl":  "https://images.unsplash.com/photo-1621305417030-9b34032d9692?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Country Rye Bread",
+        "category":  "Bread",
+        "basePrice":  5.8,
+        "shelfLifeDays":  3,
+        "imageUrl":  "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600\u0026q=80",
+        "quantity":  0,
+        "status":  "EXPIRED"
+    },
+    {
+        "name":  "Focaccia with Rosemary \u0026 Olive Oil",
+        "category":  "Bread",
+        "basePrice":  5.0,
+        "shelfLifeDays":  3,
+        "imageUrl":  "https://images.unsplash.com/photo-1593005886470-f421f9859fbb?w=600\u0026q=80",
+        "quantity":  0,
+        "status":  "EXPIRED"
+    },
+    {
+        "name":  "Banana Nut Muffin",
+        "category":  "Muffin",
+        "basePrice":  2.7,
+        "shelfLifeDays":  2,
+        "imageUrl":  "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Classic Chocolate Chip Cookie",
+        "category":  "Cookie",
+        "basePrice":  2.0,
+        "shelfLifeDays":  5,
+        "imageUrl":  "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Double Choc Fudge Cookie",
+        "category":  "Cookie",
+        "basePrice":  2.25,
+        "shelfLifeDays":  5,
+        "imageUrl":  "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Oatmeal Raisin Cookie",
+        "category":  "Cookie",
+        "basePrice":  1.9,
+        "shelfLifeDays":  5,
+        "imageUrl":  "https://images.unsplash.com/photo-1590080874088-eec64895e423?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Peanut Butter Cookie",
+        "category":  "Cookie",
+        "basePrice":  2.0,
+        "shelfLifeDays":  5,
+        "imageUrl":  "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Classic Fudge Brownie",
+        "category":  "Brownie",
+        "basePrice":  3.25,
+        "shelfLifeDays":  5,
+        "imageUrl":  "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Challah Bread",
+        "category":  "Bread",
+        "basePrice":  6.2,
+        "shelfLifeDays":  3,
+        "imageUrl":  "https://images.unsplash.com/photo-1598373182133-52452f7691ef?w=600\u0026q=80",
+        "quantity":  0,
+        "status":  "EXPIRED"
+    },
+    {
+        "name":  "Macadamia White Choc Cookie",
+        "category":  "Cookie",
+        "basePrice":  2.5,
+        "shelfLifeDays":  5,
+        "imageUrl":  "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    },
+    {
+        "name":  "Butter Croissant",
+        "category":  "Pastry",
+        "basePrice":  3.0,
+        "shelfLifeDays":  1,
+        "imageUrl":  "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600\u0026q=80",
+        "quantity":  0,
+        "status":  "EXPIRED"
+    },
+    {
+        "name":  "cherry d vanilla",
+        "category":  "muffin",
+        "basePrice":  5.0,
+        "shelfLifeDays":  1,
+        "imageUrl":  "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600\u0026q=80",
+        "quantity":  25,
+        "status":  "ACTIVE"
+    }
+]

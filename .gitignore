@@ -1,4 +1,5 @@
 smart-shelf-backend/target/
+smart-shelf-backend/data/
 *.class
 .idea/
 *.iml

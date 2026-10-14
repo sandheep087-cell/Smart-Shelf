@@ -11,6 +11,7 @@ public class WeatherService {
     private static final double SHOP_LONGITUDE = 80.156548;
     private static final String API_KEY = "cb89d2ef8f4d13b16447bc50cdf5405b";
 
+    @SuppressWarnings("unchecked")
     public String fetchWeatherCondition() {
         try {
             String url = String.format(
