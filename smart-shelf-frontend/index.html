@@ -7,35 +7,35 @@
     <title>Smart Shelf - Bakery Management Suite</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        @keyframes shimmer {
+            100% { transform: translateX(100%); }
+        }
+        .hover-shine::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
+            transform: translateX(-100%);
+            z-index: 20;
+            pointer-events: none;
+        }
+        .hover-shine:hover::after {
+            animation: shimmer 1s ease-in-out;
+        }
+        /* Hide scrollbar for horizontal cart */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #fcd34d;
+            border-radius: 10px;
+        }
+    </style>
 </head>
-<style>
-    @keyframes shimmer {
-        100% { transform: translateX(100%); }
-    }
-    .hover-shine::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
-        transform: translateX(-100%);
-        z-index: 20;
-        pointer-events: none;
-    }
-    .hover-shine:hover::after {
-        animation: shimmer 1s ease-in-out;
-    }
-    /* Hide scrollbar for horizontal cart */
-    .custom-scrollbar::-webkit-scrollbar {
-        height: 6px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-        background-color: #fcd34d;
-        border-radius: 10px;
-    }
-</style>
 
 <body class="bg-[#f4efe6] text-amber-950 font-sans min-h-screen">
 
