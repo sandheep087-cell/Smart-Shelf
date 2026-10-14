@@ -1,3 +1,4 @@
+# Trigger automatic deployment to GitHub Pages
 name: Deploy Frontend to GitHub Pages
 
 on:
