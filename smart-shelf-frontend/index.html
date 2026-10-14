@@ -722,7 +722,10 @@
         </section>
 
     <script>
-        const DEFAULT_PROD_URL = 'https://smart-shelf-backend.onrender.com';
+        const DEFAULT_PROD_URL = 'https://smart-shelf-backend-9875.onrender.com';
+        if (localStorage.getItem('SMART_SHELF_API_URL') === 'https://smart-shelf-backend.onrender.com') {
+            localStorage.removeItem('SMART_SHELF_API_URL');
+        }
         const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
             ? 'http://localhost:8080'
             : (localStorage.getItem('SMART_SHELF_API_URL') || DEFAULT_PROD_URL);
