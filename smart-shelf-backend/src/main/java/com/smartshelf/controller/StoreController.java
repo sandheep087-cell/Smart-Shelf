@@ -59,7 +59,7 @@ public class StoreController {
         return ResponseEntity.ok(savedSettings);
     }
 
-    @PostMapping("/api/store/closing-time")
+    @PostMapping({"/api/store/closing-time", "/store/closing-time", "/api/shelf/closing-time"})
     public ResponseEntity<Map<String, Object>> updateClosingTime(@RequestParam String time) {
         try {
             java.time.LocalTime newTime = java.time.LocalTime.parse(time);
@@ -75,7 +75,7 @@ public class StoreController {
         }
     }
 
-    @PostMapping("/api/store/rain-discount")
+    @PostMapping({"/api/store/rain-discount", "/store/rain-discount", "/api/shelf/rain-discount"})
     public ResponseEntity<Map<String, Object>> updateRainDiscount(@RequestParam boolean approved) {
         storeService.setRainDiscountApproved(approved);
         StoreSettings settings = storeSettingsRepository.findById(1L).orElseGet(StoreSettings::new);

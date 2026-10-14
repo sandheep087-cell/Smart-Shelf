@@ -21,5 +21,8 @@ COPY --from=build /app/target/*.jar app.jar
 # Expose Spring Boot port
 EXPOSE 8080
 
+# Set Spring profile to prod for cloud deployment
+ENV SPRING_PROFILES_ACTIVE=prod
+
 # Run Spring Boot
 ENTRYPOINT ["java", "-jar", "app.jar"]
