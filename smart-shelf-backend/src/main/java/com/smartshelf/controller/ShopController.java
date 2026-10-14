@@ -30,20 +30,23 @@ public class ShopController {
     private final OnlineOrderRepository orderRepository;
     private final SmartShelfEngine shelfEngine;
     private final WeatherService weatherService;
+    private final com.smartshelf.service.StoreService storeService;
 
     public ShopController(InventoryRepository inventoryRepository,
             OnlineOrderRepository orderRepository, SmartShelfEngine shelfEngine,
-            WeatherService weatherService) {
+            WeatherService weatherService, com.smartshelf.service.StoreService storeService) {
         this.inventoryRepository = inventoryRepository;
         this.orderRepository = orderRepository;
         this.shelfEngine = shelfEngine;
         this.weatherService = weatherService;
+        this.storeService = storeService;
     }
 
     @GetMapping("/menu")
     public ResponseEntity<List<Map<String, Object>>> getCustomerMenu() {
         double weatherPenalty = weatherService.fetchWeatherPenalty();
         String weatherCondition = weatherService.fetchWeatherCondition();
+        boolean rainApproved = storeService.isRainDiscountApproved();
         List<Map<String, Object>> menuItems = new ArrayList<>();
 
         for (InventoryItem item : inventoryRepository.findAllWithProducts()) {
@@ -61,7 +64,7 @@ public class ShopController {
             }
 
             Map<String, Object> evaluation = shelfEngine.evaluateItem(
-                    item, weatherPenalty, weatherCondition, false, 1.0);
+                    item, weatherPenalty, weatherCondition, rainApproved, 1.0);
             Map<String, Object> menuItem = new HashMap<>();
             menuItem.put("id", item.getId());
             menuItem.put("itemName", item.getProduct().getName());

@@ -19,10 +19,14 @@ public class StoreSettings {
 
     private LocalTime closingTime = LocalTime.of(21, 0);
 
+    private boolean rainDiscountApproved = false;
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public boolean isIsOpen() { return isOpen; }
     public void setIsOpen(boolean open) { isOpen = open; }
     public LocalTime getClosingTime() { return closingTime; }
     public void setClosingTime(LocalTime closingTime) { this.closingTime = closingTime; }
+    public boolean isRainDiscountApproved() { return rainDiscountApproved; }
+    public void setRainDiscountApproved(boolean rainDiscountApproved) { this.rainDiscountApproved = rainDiscountApproved; }
 }

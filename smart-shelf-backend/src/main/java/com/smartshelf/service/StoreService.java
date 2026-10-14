@@ -9,6 +9,15 @@ public class StoreService {
 
     private boolean storeClosed = false;
     private LocalTime closingTime = LocalTime.of(21, 0);
+    private boolean rainDiscountApproved = false;
+
+    public synchronized boolean isRainDiscountApproved() {
+        return rainDiscountApproved;
+    }
+
+    public synchronized void setRainDiscountApproved(boolean rainDiscountApproved) {
+        this.rainDiscountApproved = rainDiscountApproved;
+    }
 
     public synchronized LocalTime extendClosingTime(int minutesToAdd) {
         if (minutesToAdd <= 0) {

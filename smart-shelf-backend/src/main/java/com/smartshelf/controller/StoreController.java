@@ -40,6 +40,10 @@ public class StoreController {
             return storeSettingsRepository.save(defaultSettings);
         });
         storeService.setStoreClosed(!settings.isIsOpen());
+        if (settings.getClosingTime() != null) {
+            storeService.setClosingTime(settings.getClosingTime());
+        }
+        storeService.setRainDiscountApproved(settings.isRainDiscountApproved());
         return ResponseEntity.ok(settings);
     }
 
@@ -54,6 +58,33 @@ public class StoreController {
             inventoryEvaluationService.evaluateInventory();
         }
         return ResponseEntity.ok(savedSettings);
+    }
+
+    @PostMapping("/api/store/closing-time")
+    public ResponseEntity<Map<String, Object>> updateClosingTime(@RequestParam String time) {
+        try {
+            java.time.LocalTime newTime = java.time.LocalTime.parse(time);
+            storeService.setClosingTime(newTime);
+            StoreSettings settings = storeSettingsRepository.findById(1L).orElseGet(StoreSettings::new);
+            settings.setId(1L);
+            settings.setClosingTime(newTime);
+            storeSettingsRepository.save(settings);
+            inventoryEvaluationService.evaluateInventory();
+            return ResponseEntity.ok(Map.of("status", "Success", "newClosingTime", newTime.toString()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("status", "Failure", "message", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/api/store/rain-discount")
+    public ResponseEntity<Map<String, Object>> updateRainDiscount(@RequestParam boolean approved) {
+        storeService.setRainDiscountApproved(approved);
+        StoreSettings settings = storeSettingsRepository.findById(1L).orElseGet(StoreSettings::new);
+        settings.setId(1L);
+        settings.setRainDiscountApproved(approved);
+        storeSettingsRepository.save(settings);
+        inventoryEvaluationService.evaluateInventory();
+        return ResponseEntity.ok(Map.of("status", "Success", "rainDiscountApproved", approved));
     }
 
     @PostMapping("/store/extend-time")

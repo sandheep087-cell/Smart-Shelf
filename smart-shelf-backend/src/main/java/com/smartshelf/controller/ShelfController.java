@@ -41,6 +41,9 @@ public class ShelfController {
     @Autowired
     private SmartShelfEngine shelfEngine;
 
+    @Autowired
+    private com.smartshelf.service.StoreService storeService;
+
     // --- PRODUCT CATALOG MANAGEMENT ---
 
     @GetMapping("/products")
@@ -164,11 +167,12 @@ public class ShelfController {
     }
 
     @GetMapping("/inventory/evaluated")
-        public ResponseEntity<List<Map<String, Object>>> getAllEvaluatedInventory(
+    public ResponseEntity<List<Map<String, Object>>> getAllEvaluatedInventory(
             @RequestParam(defaultValue = "false") boolean rainDiscountApproved) {
         List<InventoryItem> items = inventoryRepository.findAllWithProducts();
         double liveWeatherPenalty = weatherService.fetchWeatherPenalty();
         String liveWeatherCondition = weatherService.fetchWeatherCondition();
+        boolean effectiveRain = rainDiscountApproved || storeService.isRainDiscountApproved();
         
         List<Map<String, Object>> evaluatedList = new java.util.ArrayList<>();
         for (InventoryItem item : items) {
@@ -182,7 +186,7 @@ public class ShelfController {
 
             Map<String, Object> evaluation = shelfEngine.evaluateItem(
                     item, liveWeatherPenalty, liveWeatherCondition,
-                    rainDiscountApproved, 1.0);
+                    effectiveRain, 1.0);
             evaluation.put("itemId", item.getId());
             evaluation.put("currentQuantity", item.getCurrentQuantity());
             evaluation.put("basePrice", item.getProduct() != null ? item.getProduct().getBasePrice() : 0.0);
@@ -193,12 +197,13 @@ public class ShelfController {
         return ResponseEntity.ok(evaluatedList);
     }
 
-    @GetMapping("/shelf/posters")
+    @GetMapping({"/shelf/posters", "/posters"})
     public ResponseEntity<List<Map<String, Object>>> getFlashPosters(
             @RequestParam(required = false, defaultValue = "false") boolean rainDiscountApproved) {
         List<InventoryItem> items = inventoryRepository.findAll();
         double liveWeatherPenalty = weatherService.fetchWeatherPenalty();
         String liveWeatherCondition = weatherService.fetchWeatherCondition();
+        boolean effectiveRain = rainDiscountApproved || storeService.isRainDiscountApproved();
 
         List<Map<String, Object>> discountedItems = new java.util.ArrayList<>();
         for (InventoryItem item : items) {
@@ -215,7 +220,7 @@ public class ShelfController {
             }
 
             Map<String, Object> evaluation = shelfEngine.evaluateItem(
-                    item, liveWeatherPenalty, liveWeatherCondition, rainDiscountApproved, 1.0);
+                    item, liveWeatherPenalty, liveWeatherCondition, effectiveRain, 1.0);
             double discount = 0.0;
             if (evaluation.containsKey("discountPercentage")) {
                 discount = Double.parseDouble(evaluation.get("discountPercentage").toString());

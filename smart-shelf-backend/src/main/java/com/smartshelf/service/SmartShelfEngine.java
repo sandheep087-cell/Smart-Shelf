@@ -24,20 +24,28 @@ public class SmartShelfEngine {
         // Target today's configured closing time.
         LocalDateTime closingDateTime = LocalDateTime.of(now.toLocalDate(), storeService.getClosingTime());
         
-        // If it's already past 9 PM, target 9 PM tomorrow
+        // If it's already past closing time, treat as end-of-day clearance
+        double hoursRemaining;
         if (now.isAfter(closingDateTime)) {
-            closingDateTime = closingDateTime.plusDays(1);
+            hoursRemaining = 0.5; // Immediate clearance urgency
+        } else {
+            hoursRemaining = Duration.between(now, closingDateTime).toMinutes() / 60.0;
+            if (hoursRemaining <= 0.1) {
+                hoursRemaining = 0.1; // Safety guard against division by zero
+            }
         }
 
-        // Hours remaining until closing time
-        double hoursRemaining = Duration.between(now, closingDateTime).toMinutes() / 60.0;
-        
-        if (hoursRemaining <= 0.1) {
-            hoursRemaining = 0.1; // Safety guard against division by zero
+        // Factor in shelf-life urgency (1-day daily bakes need faster clearance)
+        double shelfLifeFactor = 1.0;
+        int shelfLifeDays = item.getShelfLifeDays();
+        if (shelfLifeDays <= 1) {
+            shelfLifeFactor = 1.5;
+        } else if (shelfLifeDays <= 2) {
+            shelfLifeFactor = 1.25;
         }
 
-        // Risk Score Formula: (Items Left / Hours Remaining) * Weather Penalty * Day Weight
-        double rawScore = ((double) item.getCurrentQuantity() / hoursRemaining) * weatherPenalty * dayWeight;
+        // Risk Score Formula: (Items Left / Hours Remaining) * Weather Penalty * Day Weight * shelfLifeFactor
+        double rawScore = ((double) item.getCurrentQuantity() / hoursRemaining) * weatherPenalty * dayWeight * shelfLifeFactor;
         
         // Normalize and cap the score out of 5.0 so thresholds like 3.5 work accurately
         double riskScore = Math.min(5.0, Math.round((rawScore / 15.0) * 100.0) / 100.0);

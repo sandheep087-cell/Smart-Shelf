@@ -921,7 +921,7 @@
         }
 
         // Function to read and apply manual closing time from the input box
-        function setManualClosingTime() {
+        async function setManualClosingTime() {
             const timeInput = document.getElementById('manual-closing-time-input').value;
             if (!timeInput) {
                 alert('Please select a valid time.');
@@ -937,9 +937,19 @@
             const formattedHour = closingHour > 12 ? closingHour - 12 : (closingHour === 0 ? 12 : closingHour);
             const formattedMinute = closingMinute.toString().padStart(2, '0');
 
-            alert(`Closing target successfully updated to ${formattedHour}:${formattedMinute} ${period}!`);
+            try {
+                // Sync with Spring Boot backend so customer store and pricing recalculate dynamically
+                await fetch(`${API_URL}/api/store/closing-time?time=${timeInput}`, { method: 'POST' });
+            } catch (e) {
+                console.error("Failed to sync closing time to backend", e);
+            }
+
+            alert(`Closing target successfully updated to ${formattedHour}:${formattedMinute} ${period}! Discounts and risk scores are recalculating...`);
             checkStoreStatus();
             loadDashboardData();
+            if (typeof loadCustomerStoreMenu === 'function') {
+                loadCustomerStoreMenu();
+            }
         }
 
         // Smart Toggle Button Action
@@ -997,6 +1007,18 @@
                 if (!res.ok) return;
                 const data = await res.json();
                 updateStoreUIState(data.isOpen);
+                if (data.closingTime) {
+                    const [h, m] = data.closingTime.split(':').map(Number);
+                    closingHour = h;
+                    closingMinute = m;
+                    const timeInput = document.getElementById('manual-closing-time-input');
+                    if (timeInput) {
+                        timeInput.value = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+                    }
+                }
+                if (data.rainDiscountApproved !== undefined) {
+                    rainDiscountApproved = data.rainDiscountApproved;
+                }
             } catch (err) {
                 console.error('Failed to fetch store status', err);
             }
@@ -1966,17 +1988,35 @@
             }
         }
 
-        function approveRainDiscount() {
+        async function approveRainDiscount() {
             rainDiscountApproved = true;
-            document.getElementById('rain-approval-banner').classList.add('hidden');
-            document.getElementById('weather-card-approval').classList.add('hidden');
+            document.getElementById('rain-approval-banner')?.classList.add('hidden');
+            document.getElementById('weather-card-approval')?.classList.add('hidden');
+            try {
+                await fetch(`${API_URL}/api/store/rain-discount?approved=true`, { method: 'POST' });
+            } catch (e) {
+                console.error("Failed to sync rain discount to backend", e);
+            }
             alert("Rain emergency discount approved! Prices dropped by 50%.");
             loadDashboardData();
+            if (typeof loadCustomerStoreMenu === 'function') {
+                loadCustomerStoreMenu();
+            }
         }
 
-        function dismissRainDiscount() {
-            document.getElementById('rain-approval-banner').classList.add('hidden');
-            document.getElementById('weather-card-approval').classList.add('hidden');
+        async function dismissRainDiscount() {
+            rainDiscountApproved = false;
+            document.getElementById('rain-approval-banner')?.classList.add('hidden');
+            document.getElementById('weather-card-approval')?.classList.add('hidden');
+            try {
+                await fetch(`${API_URL}/api/store/rain-discount?approved=false`, { method: 'POST' });
+            } catch (e) {
+                console.error("Failed to sync rain discount dismissal to backend", e);
+            }
+            loadDashboardData();
+            if (typeof loadCustomerStoreMenu === 'function') {
+                loadCustomerStoreMenu();
+            }
         }
 
         let posProductsData = [];
