@@ -92,6 +92,15 @@
                     Store</button>
             </nav>
 
+            <!-- Backend Connection Status / Override Button -->
+            <button onclick="configureBackendUrl()" id="backend-status-btn"
+                class="px-3 py-1.5 bg-amber-950/70 hover:bg-amber-800 text-amber-200 border border-amber-700/60 rounded-xl text-xs font-mono flex items-center gap-2 transition shadow-sm"
+                title="Click to check or update your live Backend URL">
+                <span id="backend-indicator-dot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                <span id="backend-url-display" class="truncate max-w-[160px]">Connecting...</span>
+                <span>⚙️</span>
+            </button>
+
         </div>
     </header>
 
@@ -723,6 +732,47 @@
         let customerCart = [];
         let currentOrderTab = 'Pending';
         let allCachedOrders = [];
+
+        function configureBackendUrl() {
+            const current = localStorage.getItem('SMART_SHELF_API_URL') || API_URL;
+            const input = prompt("Enter your live Render Backend URL:\n(Find this at the top of your Render service dashboard, ending in .onrender.com)", current);
+            if (input && input.trim()) {
+                let clean = input.trim().replace(/\/+$/, '');
+                if (!clean.startsWith('http://') && !clean.startsWith('https://')) {
+                    clean = 'https://' + clean;
+                }
+                localStorage.setItem('SMART_SHELF_API_URL', clean);
+                alert("Backend URL saved: " + clean + "\nReloading page now to connect...");
+                window.location.reload();
+            }
+        }
+
+        async function updateBackendStatusPill() {
+            const display = document.getElementById('backend-url-display');
+            const dot = document.getElementById('backend-indicator-dot');
+            if (!display || !dot) return;
+
+            try {
+                const urlObj = new URL(API_URL);
+                display.textContent = urlObj.hostname;
+                display.title = "Current Backend: " + API_URL;
+
+                // Ping health endpoint
+                const testRes = await fetch(`${API_URL}/api/store/status`, { signal: AbortSignal.timeout(6000) });
+                if (testRes.ok) {
+                    dot.className = "w-2 h-2 rounded-full bg-green-400";
+                    display.title = "✅ Connected to: " + API_URL;
+                } else {
+                    dot.className = "w-2 h-2 rounded-full bg-red-400";
+                    display.textContent = "Error " + testRes.status + " (Click to fix)";
+                    display.title = "Backend returned error " + testRes.status + ". Click to change URL.";
+                }
+            } catch (e) {
+                dot.className = "w-2 h-2 rounded-full bg-red-400";
+                display.textContent = "Offline (Click to set)";
+                display.title = "Could not reach " + API_URL + ". Click to enter your live Render URL.";
+            }
+        }
 
         async function handleButtonAction(buttonElement, asyncAction) {
             if (!buttonElement || buttonElement.disabled) return;
@@ -2195,6 +2245,7 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            updateBackendStatusPill();
             loadCustomerStoreMenu();
             checkStoreStatusOnLoad();
             loadAdminOnlineOrders();
@@ -2203,6 +2254,7 @@
         checkStoreStatus();
         loadDashboardData();
         startLiveShelfPolling();
+        updateBackendStatusPill();
     </script>
 </body>
 
