@@ -69,9 +69,10 @@ public class ShopController {
             menuItem.put("id", item.getId());
             menuItem.put("itemName", item.getProduct().getName());
             menuItem.put("price", evaluation.get("adjustedPrice"));
-            menuItem.put("originalPrice", item.getProduct().getBasePrice());
             menuItem.put("adjustedPrice", evaluation.get("adjustedPrice"));
+            menuItem.put("originalPrice", item.getProduct().getBasePrice());
             menuItem.put("basePrice", item.getProduct().getBasePrice());
+            menuItem.put("discountPercentage", evaluation.get("discountPercentage"));
             menuItem.put("isFlashDeal", ((Number) evaluation.get("discountPercentage")).doubleValue() > 0);
             menuItem.put("currentQuantity", item.getCurrentQuantity());
             menuItem.put("imageUrl", item.getProduct().getImageUrl());
