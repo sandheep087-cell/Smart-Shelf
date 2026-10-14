@@ -713,7 +713,10 @@
         </section>
 
     <script>
-        const API_URL = 'http://localhost:8080';
+        const DEFAULT_PROD_URL = 'https://smart-shelf-backend.onrender.com';
+        const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+            ? 'http://localhost:8080'
+            : (localStorage.getItem('SMART_SHELF_API_URL') || DEFAULT_PROD_URL);
         const SHELF_API_URL = `${API_URL}/api/shelf`;
         const ADMIN_ORDERS_URL = `${API_URL}/api/admin/orders`;
         const SHOP_URL = `${API_URL}/api/shop`;

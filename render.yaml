@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: smart-shelf-backend
+    runtime: docker
+    rootDir: smart-shelf-backend
+    dockerfilePath: Dockerfile
+    plan: free
+    healthCheckPath: /api/store/status
+    autoDeploy: true
