@@ -7,35 +7,35 @@
     <title>Smart Shelf - Bakery Management Suite</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        @keyframes shimmer {
+            100% { transform: translateX(100%); }
+        }
+        .hover-shine::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
+            transform: translateX(-100%);
+            z-index: 20;
+            pointer-events: none;
+        }
+        .hover-shine:hover::after {
+            animation: shimmer 1s ease-in-out;
+        }
+        /* Hide scrollbar for horizontal cart */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #fcd34d;
+            border-radius: 10px;
+        }
+    </style>
 </head>
-<style>
-    @keyframes shimmer {
-        100% { transform: translateX(100%); }
-    }
-    .hover-shine::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
-        transform: translateX(-100%);
-        z-index: 20;
-        pointer-events: none;
-    }
-    .hover-shine:hover::after {
-        animation: shimmer 1s ease-in-out;
-    }
-    /* Hide scrollbar for horizontal cart */
-    .custom-scrollbar::-webkit-scrollbar {
-        height: 6px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-        background-color: #fcd34d;
-        border-radius: 10px;
-    }
-</style>
 
 <body class="bg-[#f4efe6] text-amber-950 font-sans min-h-screen">
 
@@ -82,8 +82,10 @@
                     class="px-3 py-1.5 bg-transparent hover:bg-amber-800/50 text-amber-200 font-semibold rounded-lg text-xs transition">Sales
                     & Revenue</button>
                 <button onclick="switchTab('posters')" id="nav-posters"
-                    class="px-3 py-1.5 bg-transparent hover:bg-amber-800/50 text-amber-200 font-semibold rounded-lg text-xs transition">Flash
-                    Posters</button>
+                    class="px-3 py-1.5 bg-transparent hover:bg-amber-800/50 text-amber-200 font-semibold rounded-lg text-xs transition flex items-center gap-1.5">
+                    <span>Flash Posters</span>
+                    <span id="nav-posters-badge" class="hidden px-1.5 py-0.5 bg-rose-600 text-white text-[10px] rounded-full font-bold"></span>
+                </button>
                 <button onclick="switchTab('orders')" id="nav-orders"
                     class="px-3 py-1.5 bg-transparent hover:bg-amber-800/50 text-amber-200 font-semibold rounded-lg text-xs transition">Online
                     Orders</button>
@@ -438,12 +440,12 @@
             <div
                 class="flex flex-col md:flex-row justify-between items-start md:items-center bg-gradient-to-r from-amber-950 via-amber-900 to-amber-800 text-white p-6 rounded-2xl shadow-lg border border-amber-800/40 gap-4">
                 <div>
-                    <div class="flex items-center gap-2 mb-1">
+                    <div class="flex items-center gap-2 mb-1 flex-wrap">
                         <span class="text-2xl">⚡</span>
                         <h2 class="text-2xl font-black tracking-tight">Active Digital Flash Posters</h2>
-                        <span class="bg-amber-400/20 text-amber-200 text-xs px-2.5 py-0.5 rounded-full font-bold border border-amber-400/30">Live Marketing</span>
+                        <span id="posters-tab-status-pill" class="bg-amber-400/20 text-amber-200 text-xs px-2.5 py-0.5 rounded-full font-bold border border-amber-400/30">Checking Price Drops...</span>
                     </div>
-                    <p class="text-xs text-amber-200 max-w-xl">Dynamically generated promotional signage featuring products with markdown discounts and a scannable QR code directing shoppers directly into your Customer Store.</p>
+                    <p class="text-xs text-amber-200 max-w-xl">Dynamically generated promotional signage displayed exclusively when items have active price drops or markdown discounts, complete with a scannable QR code to your Customer Store.</p>
                 </div>
                 <div class="flex items-center gap-2 flex-wrap">
                     <button onclick="handleButtonAction(this, () => loadFlashPosters())"
@@ -566,7 +568,7 @@
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold text-gray-600 mb-1">Customer Name</label>
-                                    <input type="text" id="pos-customer-name" placeholder="e.g., Raghul S"
+                                    <input type="text" id="pos-customer-name" placeholder="e.g., Sandheep"
                                         class="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-amber-500 outline-none bg-gray-50/50">
                                 </div>
                             </div>
@@ -1527,7 +1529,7 @@
 
                 let allItems = [];
 
-                // 1. Try fetching algorithmic markdowns from posters endpoint
+                // 1. Fetch algorithmic markdowns from posters endpoint
                 try {
                     const res = await fetch(`${SHELF_API_URL}/posters?rainDiscountApproved=${rainDiscountApproved}`);
                     if (res.ok) {
@@ -1540,68 +1542,149 @@
                     console.warn("Could not query /posters", e);
                 }
 
-                // 2. If empty, check evaluated inventory for any items with discounts
-                if (allItems.length === 0) {
-                    try {
-                        const evalRes = await fetch(`${SHELF_API_URL}/inventory/evaluated?rainDiscountApproved=${rainDiscountApproved}`);
-                        if (evalRes.ok) {
-                            const evaluated = await evalRes.json();
-                            evaluated.forEach(item => {
-                                const disc = Number(item.discountPercentage) || 0;
-                                if (disc > 0 && Number(item.currentQuantity) > 0) {
-                                    allItems.push(item);
-                                }
-                            });
-                        }
-                    } catch (e) {
-                        console.warn("Could not query /inventory/evaluated", e);
+                // 2. Also check evaluated inventory for any items with active price drops
+                try {
+                    const evalRes = await fetch(`${SHELF_API_URL}/inventory/evaluated?rainDiscountApproved=${rainDiscountApproved}`);
+                    if (evalRes.ok) {
+                        const evaluated = await evalRes.json();
+                        evaluated.forEach(item => {
+                            const disc = Number(item.discountPercentage) || 0;
+                            const base = Number(item.basePrice) || 0;
+                            const adj = Number(item.adjustedPrice) || base;
+                            const qty = Number(item.currentQuantity) || 0;
+                            if (qty > 0 && (disc > 0 || adj < (base - 0.001))) {
+                                allItems.push(item);
+                            }
+                        });
+                    }
+                } catch (e) {
+                    console.warn("Could not query /inventory/evaluated", e);
+                }
+
+                // STRICT FILTER: Keep ONLY items where the price has ACTUALLY dropped (discount > 0 and adjustedPrice < basePrice)
+                const seen = new Set();
+                const discountedItems = [];
+                allItems.forEach(item => {
+                    const id = item.itemId || item.id;
+                    const base = Number(item.basePrice) || 0;
+                    const adj = Number(item.adjustedPrice) || base;
+                    const disc = Number(item.discountPercentage) || 0;
+                    const qty = Number(item.currentQuantity ?? 1);
+                    const hasPriceDrop = qty > 0 && (disc > 0 || adj < (base - 0.001));
+                    if (id && !seen.has(id) && hasPriceDrop) {
+                        seen.add(id);
+                        const effectiveDisc = disc > 0 ? disc : (base > 0 ? Math.round(((base - adj) / base) * 100) : 0);
+                        discountedItems.push({
+                            itemId: id,
+                            itemName: item.itemName || 'Unknown Item',
+                            category: item.category || 'Bakery',
+                            basePrice: base,
+                            adjustedPrice: adj,
+                            discountPercentage: effectiveDisc,
+                            imageUrl: item.imageUrl || '',
+                            customTag: item.customTag || (effectiveDisc >= 50 ? 'BUY 1 GET 1 FREE' : `${effectiveDisc}% OFF`)
+                        });
+                    }
+                });
+
+                // Update tab status pill and navigation badge based on active price drops
+                const liveBadge = document.getElementById('posters-tab-status-pill');
+                const navBadge = document.getElementById('nav-posters-badge');
+                if (discountedItems.length > 0) {
+                    if (liveBadge) {
+                        liveBadge.innerHTML = `⚡ ${discountedItems.length} Deals Active`;
+                        liveBadge.className = 'bg-rose-500/20 text-rose-200 text-xs px-2.5 py-0.5 rounded-full font-bold border border-rose-400/40 animate-pulse';
+                    }
+                    if (navBadge) {
+                        navBadge.textContent = `${discountedItems.length}`;
+                        navBadge.className = 'px-1.5 py-0.5 bg-rose-600 text-white text-[10px] rounded-full font-bold animate-pulse';
+                        navBadge.classList.remove('hidden');
+                    }
+                } else {
+                    if (liveBadge) {
+                        liveBadge.innerHTML = `Standard Prices (No Price Drops)`;
+                        liveBadge.className = 'bg-amber-400/20 text-amber-200 text-xs px-2.5 py-0.5 rounded-full font-bold border border-amber-400/30';
+                    }
+                    if (navBadge) {
+                        navBadge.classList.add('hidden');
                     }
                 }
 
-                // 3. Fallback: If no items currently have algorithmic markdown (e.g. morning regular prices),
-                // feature top items from catalog with high-value promotional flash deals so the poster ALWAYS displays products with discounts!
-                if (allItems.length === 0) {
-                    try {
-                        const prodRes = await fetch(`${SHELF_API_URL}/products`);
-                        if (prodRes.ok) {
-                            const products = await prodRes.json();
-                            const flashDiscountScheme = [
-                                { discount: 50, tag: 'BUY 1 GET 1 FREE' },
-                                { discount: 35, tag: '35% OFF' },
-                                { discount: 30, tag: '30% OFF' },
-                                { discount: 40, tag: '40% OFF' },
-                                { discount: 25, tag: '25% OFF' },
-                                { discount: 50, tag: 'FLAT 50% OFF' }
-                            ];
-                            products.slice(0, 6).forEach((prod, idx) => {
-                                const scheme = flashDiscountScheme[idx % flashDiscountScheme.length];
-                                const base = Number(prod.basePrice) || 3.50;
-                                const adjusted = Math.round(base * (1 - scheme.discount / 100) * 100) / 100;
-                                allItems.push({
-                                    itemId: prod.id,
-                                    itemName: prod.name,
-                                    category: prod.category || 'Bakery',
-                                    basePrice: base,
-                                    adjustedPrice: adjusted,
-                                    discountPercentage: scheme.discount,
-                                    imageUrl: prod.imageUrl || '',
-                                    customTag: scheme.tag
-                                });
-                            });
-                        }
-                    } catch (e) {
-                        console.warn("Could not fetch fallback products", e);
-                    }
+                // If NO items have dropped in price, DO NOT display any posters!
+                if (discountedItems.length === 0) {
+                    container.innerHTML = `
+                        <div class="bg-white rounded-3xl p-10 md:p-14 text-center border-2 border-amber-200/70 shadow-xl max-w-3xl mx-auto flex flex-col items-center gap-6">
+                            <div class="w-20 h-20 bg-amber-50 rounded-2xl flex items-center justify-center text-4xl shadow-inner border border-amber-200/80">
+                                🏷️
+                            </div>
+                            <div class="space-y-3 max-w-lg">
+                                <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                    <span>All Inventory at Standard Regular Prices</span>
+                                </div>
+                                <h3 class="text-2xl font-black text-gray-900 tracking-tight">No Active Price Drops</h3>
+                                <p class="text-sm text-gray-600 leading-relaxed">
+                                    Flash posters are displayed <strong>only when items have an active price drop</strong>.
+                                </p>
+                                <p class="text-xs text-gray-500">
+                                    Currently, all fresh baked items are selling at standard catalog prices because freshness and sales velocity are balanced. When items age, approach closing hours, or trigger weather discounts, Smart Shelf will automatically generate promotional posters right here.
+                                </p>
+                            </div>
+
+                            <!-- Status Cards Grid -->
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-lg">
+                                <div class="bg-amber-50/60 rounded-xl p-3.5 border border-amber-100 text-center">
+                                    <span class="text-[10px] uppercase font-bold text-gray-500 block">Marked Down Items</span>
+                                    <span class="text-2xl font-black text-gray-800">0</span>
+                                </div>
+                                <div class="bg-amber-50/60 rounded-xl p-3.5 border border-amber-100 text-center">
+                                    <span class="text-[10px] uppercase font-bold text-gray-500 block">Pricing Matrix</span>
+                                    <span class="text-xs font-bold text-emerald-700 block mt-1.5">Regular Base Price</span>
+                                </div>
+                                <div class="bg-amber-50/60 rounded-xl p-3.5 border border-amber-100 text-center">
+                                    <span class="text-[10px] uppercase font-bold text-gray-500 block">Poster Display</span>
+                                    <span class="text-xs font-bold text-amber-800 block mt-1.5">Standby Mode</span>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+                                <button onclick="switchTab('pricing')" 
+                                    class="bg-amber-800 hover:bg-amber-900 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md transition flex items-center gap-2">
+                                    <span>📊</span> View Full Pricing & Risk
+                                </button>
+                                <button onclick="switchTab('dashboard')" 
+                                    class="bg-amber-100 hover:bg-amber-200 text-amber-950 text-xs font-bold px-4 py-2.5 rounded-xl border border-amber-300 transition flex items-center gap-2">
+                                    <span>⏱️</span> Closing Target & Weather
+                                </button>
+                                <button onclick="handleButtonAction(this, () => loadFlashPosters())" 
+                                    class="bg-white hover:bg-gray-50 text-gray-700 text-xs font-bold px-4 py-2.5 rounded-xl border border-gray-200 shadow-sm transition flex items-center gap-2">
+                                    <span>🔄</span> Check for Price Drops
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    return;
                 }
 
-                // Sort by highest discount percentage
-                allItems.sort((a, b) => (b.discountPercentage || 0) - (a.discountPercentage || 0));
+                // If items DO have price drops, sort by highest discount and display the promotional poster!
+                discountedItems.sort((a, b) => (b.discountPercentage || 0) - (a.discountPercentage || 0));
 
                 // Take top 4 deals for a high-impact social media layout
-                const topDeals = allItems.slice(0, 4);
+                const topDeals = discountedItems.slice(0, 4);
+                const maxDiscount = Math.max(...discountedItems.map(d => d.discountPercentage || 0));
 
                 container.innerHTML = `
                     <div class="flex flex-col gap-6 items-center py-2">
+                        <!-- Active Drops Alert Banner -->
+                        <div class="w-full max-w-3xl bg-gradient-to-r from-rose-50 to-amber-50 border border-rose-200 rounded-2xl px-5 py-3 flex items-center justify-between flex-wrap gap-2 shadow-sm">
+                            <div class="flex items-center gap-2">
+                                <span class="text-lg">⚡</span>
+                                <span class="text-xs font-black text-rose-900">Active Price Drops: <span class="text-rose-600 font-black">${discountedItems.length} products currently discounted</span></span>
+                            </div>
+                            <span class="text-[11px] font-bold text-amber-900 bg-white/80 px-2.5 py-1 rounded-lg border border-amber-200">Featuring Top ${topDeals.length} Flash Deals</span>
+                        </div>
+
                         <!-- High Resolution Poster Card -->
                         <div id="poster-top-deals" class="w-full max-w-3xl bg-[#FFFDF9] rounded-2xl shadow-2xl p-0 relative overflow-hidden flex flex-col font-sans border-4 border-amber-900/10">
                             
@@ -1643,7 +1726,7 @@
 
                                 <div class="flex justify-center items-center mt-5 z-10 relative">
                                     <div class="bg-[#231f20] text-amber-200 px-6 py-1.5 rounded-full font-extrabold uppercase tracking-widest text-xs shadow-md border border-amber-400/30 flex items-center gap-2">
-                                        <span>⚡</span> UP TO 50% OFF ON SELECTED FRESH PASTRIES & BREADS <span>⚡</span>
+                                        <span>⚡</span> UP TO ${maxDiscount}% OFF ON ${discountedItems.length} ACTIVE PRICE DROPS <span>⚡</span>
                                     </div>
                                 </div>
                             </div>
@@ -1938,6 +2021,25 @@
                 const evaluatedItems = await res.json();
 
                 document.getElementById('stat-total').innerText = evaluatedItems.length;
+
+                // Update Flash Posters badge in navigation based on active price drops
+                const activePriceDropsCount = evaluatedItems.filter(e => {
+                    const base = Number(e.basePrice) || 0;
+                    const adj = Number(e.adjustedPrice) || base;
+                    const disc = Number(e.discountPercentage) || 0;
+                    const qty = Number(e.currentQuantity) || 0;
+                    return qty > 0 && (disc > 0 || adj < (base - 0.001));
+                }).length;
+                const navBadge = document.getElementById('nav-posters-badge');
+                if (navBadge) {
+                    if (activePriceDropsCount > 0) {
+                        navBadge.textContent = `${activePriceDropsCount}`;
+                        navBadge.className = 'px-1.5 py-0.5 bg-rose-600 text-white text-[10px] rounded-full font-bold animate-pulse';
+                        navBadge.classList.remove('hidden');
+                    } else {
+                        navBadge.classList.add('hidden');
+                    }
+                }
 
                 const liveStockTbody = document.getElementById('live-stock-table-body');
                 if (liveStockTbody) {
