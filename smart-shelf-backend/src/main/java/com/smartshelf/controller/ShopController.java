@@ -31,15 +31,18 @@ public class ShopController {
     private final SmartShelfEngine shelfEngine;
     private final WeatherService weatherService;
     private final com.smartshelf.service.StoreService storeService;
+    private final com.smartshelf.repository.CustomerRepository customerRepository;
 
     public ShopController(InventoryRepository inventoryRepository,
             OnlineOrderRepository orderRepository, SmartShelfEngine shelfEngine,
-            WeatherService weatherService, com.smartshelf.service.StoreService storeService) {
+            WeatherService weatherService, com.smartshelf.service.StoreService storeService,
+            com.smartshelf.repository.CustomerRepository customerRepository) {
         this.inventoryRepository = inventoryRepository;
         this.orderRepository = orderRepository;
         this.shelfEngine = shelfEngine;
         this.weatherService = weatherService;
         this.storeService = storeService;
+        this.customerRepository = customerRepository;
     }
 
     @GetMapping("/menu")
@@ -90,6 +93,27 @@ public class ShopController {
         order.setTimestamp(new Date().toString());
 
         orderRepository.save(order);
+
+        if (order.getPhone() != null && !order.getPhone().trim().isEmpty()) {
+            String phone = order.getPhone().trim();
+            String name = (order.getCustomerName() != null && !order.getCustomerName().isBlank())
+                    ? order.getCustomerName().trim() : "Online Customer";
+            customerRepository.findByPhone(phone).ifPresentOrElse(
+                c -> {
+                    if (order.getCustomerName() != null && !order.getCustomerName().isBlank()) {
+                        c.setName(name);
+                        customerRepository.save(c);
+                    }
+                },
+                () -> {
+                    com.smartshelf.model.Customer newCust = new com.smartshelf.model.Customer();
+                    newCust.setName(name);
+                    newCust.setPhone(phone);
+                    customerRepository.save(newCust);
+                }
+            );
+        }
+
         return ResponseEntity.ok(Map.of("status", "Success", "orderId", order.getOrderId()));
     }
 }

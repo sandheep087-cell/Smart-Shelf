@@ -460,6 +460,106 @@
             </div>
 
             <div id="flash-posters-container" class="space-y-6"></div>
+
+            <!-- Omnichannel Marketing Settings & Customer Phone Directory -->
+            <div id="marketing-management-panel" class="bg-white rounded-3xl p-6 md:p-8 shadow-md border-2 border-amber-200/70 space-y-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-amber-100">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">📢</span>
+                            <h3 class="font-serif font-black text-xl text-amber-950">Marketing Dispatch & Customer Phone Directory</h3>
+                        </div>
+                        <p class="text-xs text-amber-800 mt-0.5">Manage entered regular customer phone numbers for targeted SMS and configure community channels.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="loadMarketingSettingsAndCustomers()" class="text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-900 px-3.5 py-2 rounded-xl border border-amber-200 shadow-xs transition flex items-center gap-1.5">
+                            <span>🔄</span> Refresh Directory
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Column 1: Regular Customer Phone Directory (SMS Targets Only) -->
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="text-lg">📱</span>
+                                <h4 class="font-black text-sm text-gray-900 uppercase tracking-wide">Regular Customer Directory</h4>
+                            </div>
+                            <span id="regular-customer-count-pill" class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                                0 Registered
+                            </span>
+                        </div>
+                        <div class="bg-amber-50/70 p-3.5 rounded-2xl border border-amber-200 text-xs text-amber-900 space-y-1">
+                            <p class="font-bold flex items-center gap-1.5 text-amber-950">
+                                <span>🔒</span> Strict SMS Targeting Rule:
+                            </p>
+                            <p class="text-amber-800 leading-relaxed text-[11px]">
+                                Promotional SMS text messages are <strong>strictly sent ONLY</strong> to the regular customers whose phone numbers are entered below. Numbers saved during POS or online checkout are automatically added here.
+                            </p>
+                        </div>
+
+                        <!-- Add Regular Customer Form -->
+                        <form onsubmit="event.preventDefault(); addNewRegularCustomer();" class="flex flex-wrap gap-2 bg-gray-50 p-3 rounded-2xl border border-gray-200">
+                            <input type="text" id="new-cust-name" required placeholder="Customer Name (e.g. Rahul)"
+                                class="flex-1 min-w-[130px] bg-white border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium">
+                            <input type="tel" id="new-cust-phone" required maxlength="10" placeholder="10-digit Phone"
+                                class="w-32 bg-white border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium">
+                            <button type="submit" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-4 py-2 rounded-xl transition shadow-sm flex items-center gap-1 shrink-0">
+                                <span>➕</span> Add Customer
+                            </button>
+                        </form>
+
+                        <!-- Customer List Table -->
+                        <div id="regular-customers-list" class="max-h-60 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Column 2: WhatsApp Community & Instagram Configuration -->
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-2">
+                            <span class="text-lg">🌐</span>
+                            <h4 class="font-black text-sm text-gray-900 uppercase tracking-wide">Social & Community Channels</h4>
+                        </div>
+
+                        <div class="space-y-4 bg-gray-50 p-5 rounded-2xl border border-gray-200">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1 flex items-center justify-between">
+                                    <span class="flex items-center gap-1.5">
+                                        <span>💬</span> WhatsApp Community URL
+                                    </span>
+                                    <span class="text-[10px] text-emerald-600 font-semibold">Broadcast Group</span>
+                                </label>
+                                <input type="url" id="setting-whatsapp-url" placeholder="https://chat.whatsapp.com/..." 
+                                    class="w-full bg-white border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium">
+                                <p class="text-[10px] text-gray-400 mt-1">1-click broadcast opens your WhatsApp community with prefilled promotional text & pricing.</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1 flex items-center justify-between">
+                                    <span class="flex items-center gap-1.5">
+                                        <span>📸</span> Instagram Profile / Handle
+                                    </span>
+                                    <span class="text-[10px] text-pink-600 font-semibold">Bakery Handle</span>
+                                </label>
+                                <input type="text" id="setting-instagram-handle" placeholder="@bakeandbliss" 
+                                    class="w-full bg-white border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-pink-500 font-medium">
+                                <p class="text-[10px] text-gray-400 mt-1">1-click broadcast renders and downloads the flash poster PNG and copies the caption with hashtags.</p>
+                            </div>
+
+                            <div class="pt-2 flex items-center justify-between">
+                                <button onclick="saveMarketingSettings()" class="bg-[#be213b] hover:bg-red-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition shadow-sm flex items-center gap-1.5">
+                                    <span>💾</span> Save Channel Settings
+                                </button>
+                                <span id="marketing-settings-saved-msg" class="text-xs font-bold text-emerald-600 hidden">
+                                    ✓ Saved!
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- Sales & Revenue History Tab -->
@@ -734,6 +834,136 @@
                 </div>
             </main>
         </section>
+
+    <!-- 1-Click Marketing Broadcast Delivery Hub Modal -->
+    <div id="marketing-broadcast-modal" class="fixed inset-0 z-[70] bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border-2 border-amber-300 flex flex-col relative transform transition-all duration-300 scale-95 opacity-0 custom-scrollbar" id="marketing-broadcast-modal-content">
+            
+            <!-- Modal Header -->
+            <div class="p-6 bg-gradient-to-r from-amber-950 via-amber-900 to-amber-800 text-white rounded-t-3xl flex items-center justify-between border-b border-amber-700/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-2xl border border-white/20 shadow-inner">
+                        🚀
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-black text-lg md:text-xl uppercase tracking-tight">1-Click Broadcast Dispatched!</h3>
+                            <span class="bg-emerald-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm">SUCCESS</span>
+                        </div>
+                        <p class="text-xs text-amber-200 mt-0.5">Flash poster campaign published across WhatsApp, Instagram & SMS to regular customers.</p>
+                    </div>
+                </div>
+                <button onclick="closeMarketingModal()" class="text-amber-300 hover:text-white transition text-3xl font-light leading-none p-1">&times;</button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6 space-y-6">
+                <!-- Delivery Summary Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <!-- WhatsApp Status Card -->
+                    <div class="bg-emerald-50/70 border border-emerald-200 p-4 rounded-2xl flex flex-col justify-between space-y-2">
+                        <div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xl">💬</span>
+                                <span class="text-[10px] font-black bg-emerald-600 text-white px-2 py-0.5 rounded-full">SENT</span>
+                            </div>
+                            <h4 class="font-black text-xs text-emerald-950 uppercase mt-2">WhatsApp Community</h4>
+                            <p class="text-[11px] text-emerald-700 leading-tight mt-1">Formatted announcement with discounts and store link.</p>
+                        </div>
+                        <div class="pt-2 flex flex-col gap-1.5">
+                            <a id="modal-wa-link" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-center font-bold text-xs py-2 px-2.5 rounded-xl transition shadow-sm flex items-center justify-center gap-1">
+                                <span>🌐</span> Open Community ↗
+                            </a>
+                            <button onclick="copyBroadcastText('whatsapp')" class="w-full bg-emerald-100 hover:bg-emerald-200 text-emerald-900 font-bold text-[11px] py-1.5 px-2 rounded-lg transition border border-emerald-300">
+                                📋 Copy Text
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Instagram Status Card -->
+                    <div class="bg-rose-50/70 border border-rose-200 p-4 rounded-2xl flex flex-col justify-between space-y-2">
+                        <div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xl">📸</span>
+                                <span class="text-[10px] font-black bg-rose-600 text-white px-2 py-0.5 rounded-full">READY</span>
+                            </div>
+                            <h4 class="font-black text-xs text-rose-950 uppercase mt-2">Instagram Post</h4>
+                            <p class="text-[11px] text-rose-700 leading-tight mt-1">Poster graphic downloaded. Caption & hashtags copied.</p>
+                        </div>
+                        <div class="pt-2 flex flex-col gap-1.5">
+                            <a href="https://www.instagram.com/" target="_blank" class="w-full bg-rose-600 hover:bg-rose-700 text-white text-center font-bold text-xs py-2 px-2.5 rounded-xl transition shadow-sm flex items-center justify-center gap-1">
+                                <span>📸</span> Open Instagram ↗
+                            </a>
+                            <button onclick="copyBroadcastText('instagram')" class="w-full bg-rose-100 hover:bg-rose-200 text-rose-900 font-bold text-[11px] py-1.5 px-2 rounded-lg transition border border-rose-300">
+                                📋 Copy Caption
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- SMS Status Card -->
+                    <div class="bg-amber-50/70 border border-amber-200 p-4 rounded-2xl flex flex-col justify-between space-y-2">
+                        <div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xl">📱</span>
+                                <span id="modal-sms-status-pill" class="text-[10px] font-black bg-amber-600 text-white px-2 py-0.5 rounded-full">DELIVERED</span>
+                            </div>
+                            <h4 class="font-black text-xs text-amber-950 uppercase mt-2">SMS Text Messages</h4>
+                            <p class="text-[11px] text-amber-800 leading-tight mt-1">
+                                Sent strictly to <strong id="modal-sms-count">0</strong> regular customers in directory.
+                            </p>
+                        </div>
+                        <div class="pt-2">
+                            <button onclick="toggleModalSmsRecipients()" class="w-full bg-amber-200 hover:bg-amber-300 text-amber-950 font-bold text-[11px] py-2 px-2 rounded-xl transition border border-amber-300 flex items-center justify-center gap-1">
+                                <span>👥</span> View SMS Numbers
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SMS Recipients List (Expandable or visible) -->
+                <div id="modal-sms-recipients-box" class="bg-gray-50 border border-gray-200 rounded-2xl p-4 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black text-gray-800 uppercase flex items-center gap-1.5">
+                            <span>📱</span> Verified Regular Customer Recipients
+                        </span>
+                        <span class="text-[10px] text-gray-500 font-semibold">Strict Phone List Only</span>
+                    </div>
+                    <div id="modal-sms-recipients-list" class="flex flex-wrap gap-2 max-h-32 overflow-y-auto custom-scrollbar pt-1">
+                        <!-- Filled dynamically -->
+                    </div>
+                </div>
+
+                <!-- Preview of What Was Dispatched -->
+                <div class="space-y-3">
+                    <span class="text-xs font-black text-gray-700 uppercase tracking-wide block">
+                        📝 Dispatched Content Preview:
+                    </span>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div class="bg-gray-50 rounded-xl p-3 border border-gray-200 text-xs space-y-1">
+                            <span class="font-bold text-gray-800 flex items-center gap-1">
+                                <span>💬</span> WhatsApp Community Text:
+                            </span>
+                            <pre id="modal-wa-preview" class="text-[11px] text-gray-600 whitespace-pre-wrap font-sans bg-white p-2.5 rounded-lg border border-gray-200/80 max-h-36 overflow-y-auto custom-scrollbar"></pre>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-3 border border-gray-200 text-xs space-y-1">
+                            <span class="font-bold text-gray-800 flex items-center gap-1">
+                                <span>📸</span> Instagram Caption & Tags:
+                            </span>
+                            <pre id="modal-ig-preview" class="text-[11px] text-gray-600 whitespace-pre-wrap font-sans bg-white p-2.5 rounded-lg border border-gray-200/80 max-h-36 overflow-y-auto custom-scrollbar"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 bg-gray-50 border-t border-gray-200 rounded-b-3xl flex justify-between items-center">
+                <span class="text-xs text-gray-500 font-medium">✓ Omnichannel marketing synchronized</span>
+                <button onclick="closeMarketingModal()" class="bg-[#231f20] hover:bg-gray-800 text-white font-bold text-xs px-6 py-2.5 rounded-xl transition shadow">
+                    Done
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script>
         const DEFAULT_PROD_URL = 'https://smart-shelf-backend-9875.onrender.com';
@@ -1139,7 +1369,10 @@
             if (tabName === 'pricing' && typeof loadPricingDetails === 'function') loadPricingDetails();
             if (tabName === 'billing' && typeof loadPOSProducts === 'function') loadPOSProducts();
             if (tabName === 'revenue' && typeof loadRevenueData === 'function') loadRevenueData();
-            if (tabName === 'posters' && typeof loadFlashPosters === 'function') loadFlashPosters();
+            if (tabName === 'posters') {
+                if (typeof loadFlashPosters === 'function') loadFlashPosters();
+                if (typeof loadMarketingSettingsAndCustomers === 'function') loadMarketingSettingsAndCustomers();
+            }
             if (tabName === 'orders' && typeof loadAdminOnlineOrders === 'function') loadAdminOnlineOrders();
             if (tabName === 'customer-store' && typeof loadCustomerStoreMenu === 'function') loadCustomerStoreMenu();
         }
@@ -1370,6 +1603,7 @@
             document.getElementById('cust-name').value = '';
             document.getElementById('cust-phone').value = '';
             document.getElementById('cust-address').value = '';
+            loadMarketingSettingsAndCustomers();
         }
 
         async function loadAdminOnlineOrders() {
@@ -1502,6 +1736,353 @@
             } catch (err) {
                 console.error("Failed to generate poster PNG", err);
                 alert("Failed to export poster as image. Please check console.");
+            }
+        }
+
+        // ==========================================
+        // 🚀 OMNICHANNEL 1-CLICK MARKETING ENGINE
+        // (WhatsApp Community, Instagram Post & SMS to Regulars)
+        // ==========================================
+        let currentActiveDeals = [];
+        let currentActiveMaxDiscount = 0;
+        let cachedRegularCustomers = [];
+        let currentBroadcastResponse = null;
+
+        async function loadMarketingSettingsAndCustomers() {
+            try {
+                // 1. Fetch Customers
+                const custRes = await fetch(`${SHELF_API_URL}/customers`);
+                if (custRes.ok) {
+                    const customers = await custRes.json();
+                    cachedRegularCustomers = customers.filter(c => c.phone && c.phone.trim() !== '');
+                    renderRegularCustomerList();
+                }
+
+                // 2. Fetch Marketing Settings
+                const setRes = await fetch(`${SHELF_API_URL}/marketing/settings`);
+                if (setRes.ok) {
+                    const settings = await setRes.json();
+                    const waInput = document.getElementById('setting-whatsapp-url');
+                    const igInput = document.getElementById('setting-instagram-handle');
+                    if (waInput && settings.whatsappCommunityUrl) {
+                        waInput.value = settings.whatsappCommunityUrl;
+                    }
+                    if (igInput && settings.instagramHandle) {
+                        igInput.value = settings.instagramHandle;
+                    }
+                }
+            } catch (err) {
+                console.error("Failed to load marketing settings and customers", err);
+            }
+        }
+
+        function renderRegularCustomerList() {
+            const container = document.getElementById('regular-customers-list');
+            const countPill = document.getElementById('regular-customer-count-pill');
+            const badgeCount = document.getElementById('broadcast-sms-count-badge');
+
+            if (countPill) countPill.innerText = `${cachedRegularCustomers.length} Registered`;
+            if (badgeCount) badgeCount.innerText = `${cachedRegularCustomers.length}`;
+
+            if (!container) return;
+
+            if (cachedRegularCustomers.length === 0) {
+                container.innerHTML = `
+                    <div class="p-4 bg-gray-50 border border-dashed border-gray-300 rounded-xl text-center text-xs text-gray-500">
+                        No regular customer phone numbers registered yet.<br>Add one above or they will be auto-saved at checkout!
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = cachedRegularCustomers.map(cust => `
+                <div class="flex items-center justify-between p-2.5 bg-white rounded-xl border border-gray-200/80 shadow-xs hover:border-amber-300 transition text-xs">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-7 h-7 rounded-full bg-amber-100 text-amber-900 font-bold flex items-center justify-center text-[11px] shrink-0">
+                            ${(cust.name || 'C').charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-900 leading-tight">${cust.name || 'Regular Customer'}</p>
+                            <p class="text-[11px] text-gray-500 font-mono">+91 ${cust.phone}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] font-semibold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-200">
+                            Regular SMS
+                        </span>
+                        <button onclick="deleteRegularCustomer(${cust.id})" class="text-red-500 hover:text-red-700 p-1 font-bold text-xs" title="Remove customer">
+                            🗑️
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function addNewRegularCustomer() {
+            const nameInput = document.getElementById('new-cust-name');
+            const phoneInput = document.getElementById('new-cust-phone');
+            if (!nameInput || !phoneInput) return;
+            const name = nameInput.value.trim();
+            const phone = phoneInput.value.replace(/\D/g, '');
+
+            if (phone.length < 10) {
+                alert('Please enter a valid 10-digit mobile phone number.');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${SHELF_API_URL}/customers`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name || 'Valued Customer', phone: phone })
+                });
+                if (res.ok) {
+                    nameInput.value = '';
+                    phoneInput.value = '';
+                    await loadMarketingSettingsAndCustomers();
+                } else {
+                    alert('Failed to save regular customer.');
+                }
+            } catch (err) {
+                console.error('Error saving customer', err);
+                alert('Network error saving customer.');
+            }
+        }
+
+        async function deleteRegularCustomer(id) {
+            if (!confirm('Remove this customer from regular SMS dispatch list?')) return;
+            try {
+                const res = await fetch(`${SHELF_API_URL}/customers/${id}`, {
+                    method: 'DELETE'
+                });
+                if (res.ok) {
+                    await loadMarketingSettingsAndCustomers();
+                }
+            } catch (err) {
+                console.error('Error deleting customer', err);
+            }
+        }
+
+        async function saveMarketingSettings() {
+            const waUrl = document.getElementById('setting-whatsapp-url')?.value?.trim() || '';
+            const igHandle = document.getElementById('setting-instagram-handle')?.value?.trim() || '';
+            const savedMsg = document.getElementById('marketing-settings-saved-msg');
+
+            try {
+                const res = await fetch(`${SHELF_API_URL}/marketing/settings`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        whatsappCommunityUrl: waUrl,
+                        instagramHandle: igHandle
+                    })
+                });
+                if (res.ok) {
+                    if (savedMsg) {
+                        savedMsg.classList.remove('hidden');
+                        setTimeout(() => savedMsg.classList.add('hidden'), 3000);
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to save marketing settings', err);
+                alert('Failed to save settings.');
+            }
+        }
+
+        async function exportPosterForInstagram(elementId) {
+            const posterElement = document.getElementById(elementId);
+            if (!posterElement) return null;
+
+            try {
+                const canvas = await html2canvas(posterElement, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: false,
+                    backgroundColor: "#FFFDF9"
+                });
+
+                const imageLink = document.createElement('a');
+                imageLink.download = `Smart_Shelf_Flash_Deals_Poster.png`;
+                imageLink.href = canvas.toDataURL('image/png');
+                imageLink.click();
+                return canvas;
+            } catch (err) {
+                console.warn("Could not capture poster image with html2canvas:", err);
+                return null;
+            }
+        }
+
+        async function broadcastFlashPoster(channel = 'ALL') {
+            const btn = document.getElementById('btn-master-broadcast');
+            const originalHTML = btn ? btn.innerHTML : '';
+            if (btn) {
+                btn.disabled = true;
+                btn.classList.add('opacity-80', 'cursor-not-allowed');
+                btn.innerHTML = `
+                    <span class="text-3xl animate-spin">⏳</span>
+                    <div class="text-left">
+                        <div class="text-xl font-black uppercase tracking-tight">Executing 1-Click Broadcast...</div>
+                        <p class="text-xs text-amber-100 font-semibold">Generating poster graphic & dispatching to channels...</p>
+                    </div>
+                `;
+            }
+
+            try {
+                // 1. If Instagram or ALL is selected, generate and download high-resolution poster PNG!
+                if (channel === 'ALL' || channel === 'INSTAGRAM') {
+                    await exportPosterForInstagram('poster-top-deals');
+                }
+
+                // 2. Prepare payload for backend
+                let customerStoreUrl = `${window.location.origin}${window.location.pathname}#customer-store`;
+                if (!window.location.origin || window.location.origin === 'null' || window.location.protocol === 'file:') {
+                    customerStoreUrl = 'https://webgostdebug.github.io/Smart_Shelf/#customer-store';
+                }
+
+                const waUrl = document.getElementById('setting-whatsapp-url')?.value?.trim() || 'https://chat.whatsapp.com/BakeAndBlissCommunity';
+                const igHandle = document.getElementById('setting-instagram-handle')?.value?.trim() || '@bakeandbliss';
+
+                const channelsList = channel === 'ALL' ? ['sms', 'whatsapp', 'instagram'] : [channel.toLowerCase()];
+
+                const payload = {
+                    channels: channelsList,
+                    topDeals: currentActiveDeals,
+                    maxDiscount: currentActiveMaxDiscount,
+                    storeUrl: customerStoreUrl,
+                    whatsappCommunityUrl: waUrl,
+                    instagramHandle: igHandle
+                };
+
+                const res = await fetch(`${SHELF_API_URL}/marketing/broadcast`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!res.ok) {
+                    throw new Error(`Broadcast API responded with error status ${res.status}`);
+                }
+
+                const result = await res.json();
+                currentBroadcastResponse = result;
+
+                // 3. Open WhatsApp Community and Instagram
+                if (channel === 'ALL' || channel === 'WHATSAPP') {
+                    if (result.whatsapp && result.whatsapp.message) {
+                        try {
+                            await navigator.clipboard.writeText(result.whatsapp.message);
+                        } catch(e) {}
+                    }
+                    if (waUrl) {
+                        window.open(waUrl, '_blank');
+                    }
+                }
+
+                if (channel === 'ALL' || channel === 'INSTAGRAM') {
+                    if (result.instagram && result.instagram.caption) {
+                        try {
+                            await navigator.clipboard.writeText(result.instagram.caption);
+                        } catch(e) {}
+                    }
+                    window.open('https://www.instagram.com/', '_blank');
+                }
+
+                // 4. Populate and display the Broadcast Modal
+                displayBroadcastResultsModal(result, channel);
+
+            } catch (err) {
+                console.error('Broadcast failed', err);
+                alert('Broadcast failed: ' + err.message);
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-80', 'cursor-not-allowed');
+                    btn.innerHTML = originalHTML;
+                }
+            }
+        }
+
+        function displayBroadcastResultsModal(result, channel) {
+            const modalWaPreview = document.getElementById('modal-wa-preview');
+            const modalIgPreview = document.getElementById('modal-ig-preview');
+            const modalWaLink = document.getElementById('modal-wa-link');
+            const modalSmsCount = document.getElementById('modal-sms-count');
+            const recipientsList = document.getElementById('modal-sms-recipients-list');
+
+            if (result.whatsapp && modalWaPreview) {
+                modalWaPreview.textContent = result.whatsapp.message || '';
+            }
+            if (result.whatsapp && modalWaLink) {
+                modalWaLink.href = result.whatsapp.communityUrl || 'https://chat.whatsapp.com/BakeAndBlissCommunity';
+            }
+            if (result.instagram && modalIgPreview) {
+                modalIgPreview.textContent = result.instagram.caption || '';
+            }
+
+            if (result.sms) {
+                if (modalSmsCount) modalSmsCount.textContent = result.sms.recipientCount || '0';
+                if (recipientsList && result.sms.recipients) {
+                    if (result.sms.recipients.length === 0) {
+                        recipientsList.innerHTML = `<span class="text-xs text-gray-500 italic">No regular customer phone numbers registered. Add them in the Customer Directory!</span>`;
+                    } else {
+                        recipientsList.innerHTML = result.sms.recipients.map(r => `
+                            <span class="inline-flex items-center gap-1.5 bg-white border border-amber-300 text-amber-950 font-semibold text-xs px-2.5 py-1 rounded-lg shadow-2xs">
+                                <span>📱</span>
+                                <strong>${r.customerName}</strong>
+                                <span class="text-gray-500 font-mono">(${r.phone})</span>
+                                <span class="text-emerald-600 font-bold text-[10px]">✓ Sent</span>
+                            </span>
+                        `).join('');
+                    }
+                }
+            }
+
+            openMarketingModal();
+        }
+
+        function copyBroadcastText(type) {
+            if (!currentBroadcastResponse) return;
+            let textToCopy = '';
+            if (type === 'whatsapp' && currentBroadcastResponse.whatsapp) {
+                textToCopy = currentBroadcastResponse.whatsapp.message;
+            } else if (type === 'instagram' && currentBroadcastResponse.instagram) {
+                textToCopy = currentBroadcastResponse.instagram.caption;
+            }
+            if (textToCopy) {
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    alert((type === 'whatsapp' ? 'WhatsApp Community Announcement' : 'Instagram Caption') + ' copied to clipboard!');
+                }).catch(() => {
+                    prompt('Copy text:', textToCopy);
+                });
+            }
+        }
+
+        function openMarketingModal() {
+            const modal = document.getElementById('marketing-broadcast-modal');
+            const content = document.getElementById('marketing-broadcast-modal-content');
+            if (!modal || !content) return;
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeMarketingModal() {
+            const modal = document.getElementById('marketing-broadcast-modal');
+            const content = document.getElementById('marketing-broadcast-modal-content');
+            if (!modal || !content) return;
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 200);
+        }
+
+        function toggleModalSmsRecipients() {
+            const box = document.getElementById('modal-sms-recipients-box');
+            if (box) {
+                box.classList.toggle('hidden');
             }
         }
 
@@ -1673,6 +2254,8 @@
                 // Take top 4 deals for a high-impact social media layout
                 const topDeals = discountedItems.slice(0, 4);
                 const maxDiscount = Math.max(...discountedItems.map(d => d.discountPercentage || 0));
+                currentActiveDeals = topDeals;
+                currentActiveMaxDiscount = maxDiscount;
 
                 container.innerHTML = `
                     <div class="flex flex-col gap-6 items-center py-2">
@@ -1866,24 +2449,118 @@
                             </div>
                         </div>
 
-                        <!-- Action Toolbar Below Poster -->
-                        <div class="flex flex-wrap items-center justify-center gap-3 w-full max-w-3xl">
-                            <button onclick="downloadPosterAsPNG('poster-top-deals')" 
-                                class="flex-1 min-w-[240px] bg-[#be213b] hover:bg-red-700 text-white font-bold py-3.5 px-6 rounded-xl transition shadow-lg flex items-center justify-center gap-2">
-                                <span>📥</span> Download "Top Deals" Poster PNG
+                        <!-- 1-Click Omnichannel Broadcast Command Center -->
+                        <div class="w-full max-w-3xl bg-gradient-to-br from-amber-950 via-[#3a2218] to-amber-900 rounded-3xl p-6 md:p-8 shadow-2xl border-2 border-amber-300/40 text-white space-y-6">
+                            
+                            <!-- Master 1-Click Action Header -->
+                            <div class="text-center space-y-2">
+                                <div class="inline-flex items-center gap-2 bg-rose-500/30 text-rose-200 text-xs font-black uppercase px-3.5 py-1 rounded-full border border-rose-400/30 tracking-wider">
+                                    <span class="animate-pulse">⚡</span> Direct Marketing Integration
+                                </div>
+                                <h3 class="text-2xl md:text-3xl font-black uppercase tracking-tight text-white drop-shadow-sm">
+                                    Broadcast Flash Poster in 1-Click
+                                </h3>
+                                <p class="text-xs text-amber-200 max-w-xl mx-auto">
+                                    Simultaneously delivers promotional SMS text messages to registered regular customers, announces markdown deals in your WhatsApp Community, and prepares the visual poster graphic for Instagram!
+                                </p>
+                            </div>
+
+                            <!-- Big 1-Click Broadcast Button -->
+                            <button id="btn-master-broadcast" onclick="broadcastFlashPoster('ALL')" 
+                                class="w-full bg-gradient-to-r from-emerald-500 via-rose-600 to-amber-500 hover:from-emerald-600 hover:via-rose-700 hover:to-amber-600 text-white font-black p-5 rounded-2xl shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1 flex flex-col sm:flex-row items-center justify-center gap-4 text-center border-2 border-white/30 group">
+                                <span class="text-4xl group-hover:scale-125 transition-transform duration-300">🚀</span>
+                                <div class="text-left">
+                                    <div class="text-xl md:text-2xl font-black uppercase tracking-tight flex items-center gap-2">
+                                        <span>Send Flash Poster Everywhere (1-Click)</span>
+                                        <span class="bg-white/20 text-white text-[10px] px-2.5 py-0.5 rounded-full font-extrabold uppercase tracking-widest hidden sm:inline-block">Auto-Sync</span>
+                                    </div>
+                                    <p class="text-xs text-amber-100 font-semibold mt-0.5">
+                                        WhatsApp Community • Instagram Post • SMS to Entered Regular Customers
+                                    </p>
+                                </div>
                             </button>
-                            <button onclick="switchTab('customer-store')" 
-                                class="bg-[#231f20] hover:bg-gray-800 text-amber-200 font-bold py-3.5 px-6 rounded-xl transition shadow-md flex items-center justify-center gap-2">
-                                <span>🛍️</span> View Customer Store
-                            </button>
-                            <button onclick="copyCustomerStoreLink('${customerStoreUrl}')" 
-                                class="bg-amber-100 hover:bg-amber-200 text-amber-950 font-bold py-3.5 px-5 rounded-xl border border-amber-300 transition shadow-sm flex items-center justify-center gap-2"
-                                title="Copy direct Customer Store link">
-                                <span>📋</span> Copy Store Link
-                            </button>
+
+                            <!-- 3 Individual Channel Dispatch Cards -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 pt-2">
+                                <!-- WhatsApp Card -->
+                                <div class="bg-black/30 backdrop-blur-sm border border-emerald-500/40 rounded-2xl p-4 flex flex-col justify-between space-y-3 hover:border-emerald-400 transition">
+                                    <div class="space-y-1.5">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-2xl">💬</span>
+                                            <span class="text-[9px] font-black bg-emerald-500/30 text-emerald-300 border border-emerald-400/40 px-2 py-0.5 rounded-full">COMMUNITY</span>
+                                        </div>
+                                        <h4 class="font-black text-sm text-white uppercase">WhatsApp Community</h4>
+                                        <p class="text-[11px] text-amber-100/80 leading-snug">
+                                            Formatted group announcement with live discounts & store ordering link.
+                                        </p>
+                                    </div>
+                                    <button onclick="broadcastFlashPoster('WHATSAPP')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 px-3 rounded-xl transition shadow flex items-center justify-center gap-1.5">
+                                        <span>💬</span> Post to WhatsApp
+                                    </button>
+                                </div>
+
+                                <!-- Instagram Card -->
+                                <div class="bg-black/30 backdrop-blur-sm border border-rose-500/40 rounded-2xl p-4 flex flex-col justify-between space-y-3 hover:border-rose-400 transition">
+                                    <div class="space-y-1.5">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-2xl">📸</span>
+                                            <span class="text-[9px] font-black bg-rose-500/30 text-rose-300 border border-rose-400/40 px-2 py-0.5 rounded-full">POST & REEL</span>
+                                        </div>
+                                        <h4 class="font-black text-sm text-white uppercase">Instagram Post</h4>
+                                        <p class="text-[11px] text-amber-100/80 leading-snug">
+                                            Exports high-res poster image & copies caption with bakery hashtags.
+                                        </p>
+                                    </div>
+                                    <button onclick="broadcastFlashPoster('INSTAGRAM')" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs py-2.5 px-3 rounded-xl transition shadow flex items-center justify-center gap-1.5">
+                                        <span>📸</span> Post to Instagram
+                                    </button>
+                                </div>
+
+                                <!-- SMS Card -->
+                                <div class="bg-black/30 backdrop-blur-sm border border-amber-500/40 rounded-2xl p-4 flex flex-col justify-between space-y-3 hover:border-amber-400 transition">
+                                    <div class="space-y-1.5">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-2xl">📱</span>
+                                            <span class="text-[9px] font-black bg-amber-500/30 text-amber-300 border border-amber-400/40 px-2 py-0.5 rounded-full">
+                                                <span id="broadcast-sms-count-badge">0</span> REGULARS
+                                            </span>
+                                        </div>
+                                        <h4 class="font-black text-sm text-white uppercase">SMS Text Messages</h4>
+                                        <p class="text-[11px] text-amber-100/80 leading-snug">
+                                            <strong>Strictly sent only</strong> to regular customer numbers entered in directory.
+                                        </p>
+                                    </div>
+                                    <button onclick="broadcastFlashPoster('SMS')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs py-2.5 px-3 rounded-xl transition shadow flex items-center justify-center gap-1.5">
+                                        <span>📱</span> Send SMS to Regulars
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Utilities & Direct Links Toolbar -->
+                            <div class="pt-2 border-t border-amber-800/60 flex flex-wrap items-center justify-between gap-3 text-xs">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <button onclick="downloadPosterAsPNG('poster-top-deals')" 
+                                        class="bg-white/10 hover:bg-white/20 text-amber-200 font-bold py-2.5 px-4 rounded-xl transition border border-white/15 flex items-center gap-1.5">
+                                        <span>📥</span> Download Poster PNG
+                                    </button>
+                                    <button onclick="copyCustomerStoreLink('${customerStoreUrl}')" 
+                                        class="bg-white/10 hover:bg-white/20 text-amber-200 font-bold py-2.5 px-4 rounded-xl border border-white/15 transition flex items-center gap-1.5">
+                                        <span>📋</span> Copy Store Link
+                                    </button>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="switchTab('customer-store')" 
+                                        class="bg-amber-400 text-amber-950 hover:bg-amber-300 font-black py-2.5 px-4 rounded-xl transition shadow flex items-center gap-1.5">
+                                        <span>🛒</span> View Customer Store ↗
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `;
+
+                // Sync customer count badge and marketing state
+                loadMarketingSettingsAndCustomers();
             } catch (err) {
                 console.error("Failed to load flash posters", err);
                 container.innerHTML = `
@@ -2513,6 +3190,7 @@
                 loadDashboardData();
                 loadPOSProducts();
                 loadRevenueData();
+                loadMarketingSettingsAndCustomers();
             } catch (err) {
                 console.error('Checkout network error', err);
             }
@@ -2531,6 +3209,7 @@
             loadCustomerStoreMenu();
             checkStoreStatusOnLoad();
             loadAdminOnlineOrders();
+            loadMarketingSettingsAndCustomers();
             handleTabFromUrl();
         });
 

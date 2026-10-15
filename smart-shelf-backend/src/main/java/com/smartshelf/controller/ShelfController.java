@@ -47,6 +47,12 @@ public class ShelfController {
     @Autowired
     private com.smartshelf.service.StoreService storeService;
 
+    @Autowired
+    private com.smartshelf.service.MarketingBroadcastService marketingService;
+
+    @Autowired
+    private com.smartshelf.repository.StoreSettingsRepository storeSettingsRepository;
+
     // --- PRODUCT CATALOG MANAGEMENT ---
 
     @GetMapping("/products")
@@ -270,6 +276,74 @@ public class ShelfController {
         return customerRepository.findByPhone(phone)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping({"/customers", "/shelf/customers"})
+    public ResponseEntity<List<Customer>> getAllCustomers() {
+        return ResponseEntity.ok(customerRepository.findAll());
+    }
+
+    @PostMapping({"/customers", "/shelf/customers"})
+    public ResponseEntity<Customer> saveCustomer(@RequestBody Customer customer) {
+        if (customer.getPhone() == null || customer.getPhone().trim().isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        Customer existing = customerRepository.findByPhone(customer.getPhone().trim()).orElse(null);
+        if (existing != null) {
+            if (customer.getName() != null && !customer.getName().isBlank()) {
+                existing.setName(customer.getName().trim());
+            }
+            return ResponseEntity.ok(customerRepository.save(existing));
+        }
+        customer.setPhone(customer.getPhone().trim());
+        return ResponseEntity.ok(customerRepository.save(customer));
+    }
+
+    @DeleteMapping({"/customers/{id}", "/shelf/customers/{id}"})
+    public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
+        if (customerRepository.existsById(id)) {
+            customerRepository.deleteById(id);
+        }
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping({"/marketing/broadcast", "/shelf/marketing/broadcast"})
+    public ResponseEntity<Map<String, Object>> broadcastMarketing(@RequestBody Map<String, Object> payload) {
+        return ResponseEntity.ok(marketingService.executeBroadcast(payload));
+    }
+
+    @GetMapping({"/marketing/settings", "/shelf/marketing/settings"})
+    public ResponseEntity<Map<String, Object>> getMarketingSettings() {
+        com.smartshelf.model.StoreSettings settings = storeSettingsRepository.findById(1L).orElseGet(() -> {
+            com.smartshelf.model.StoreSettings s = new com.smartshelf.model.StoreSettings();
+            s.setId(1L);
+            return storeSettingsRepository.save(s);
+        });
+        Map<String, Object> map = new java.util.HashMap<>();
+        map.put("whatsappCommunityUrl", settings.getWhatsappCommunityUrl());
+        map.put("instagramHandle", settings.getInstagramHandle());
+        return ResponseEntity.ok(map);
+    }
+
+    @PostMapping({"/marketing/settings", "/shelf/marketing/settings"})
+    public ResponseEntity<Map<String, Object>> updateMarketingSettings(@RequestBody Map<String, String> payload) {
+        com.smartshelf.model.StoreSettings settings = storeSettingsRepository.findById(1L).orElseGet(() -> {
+            com.smartshelf.model.StoreSettings s = new com.smartshelf.model.StoreSettings();
+            s.setId(1L);
+            return storeSettingsRepository.save(s);
+        });
+        if (payload.containsKey("whatsappCommunityUrl")) {
+            settings.setWhatsappCommunityUrl(payload.get("whatsappCommunityUrl"));
+        }
+        if (payload.containsKey("instagramHandle")) {
+            settings.setInstagramHandle(payload.get("instagramHandle"));
+        }
+        storeSettingsRepository.save(settings);
+        Map<String, Object> map = new java.util.HashMap<>();
+        map.put("status", "SUCCESS");
+        map.put("whatsappCommunityUrl", settings.getWhatsappCommunityUrl());
+        map.put("instagramHandle", settings.getInstagramHandle());
+        return ResponseEntity.ok(map);
     }
 
     @PostMapping({"/checkout", "/shelf/checkout"})
