@@ -1927,10 +1927,42 @@
                 `;
             }
 
-            try {
-                // 1. If Instagram or ALL is selected, generate and download high-resolution poster PNG!
-                if (channel === 'ALL' || channel === 'INSTAGRAM') {
-                    await exportPosterForInstagram('poster-top-deals');
+                // 1. Generate poster canvas and image file for sharing
+                let posterFile = null;
+                try {
+                    const posterElement = document.getElementById('poster-top-deals');
+                    if (posterElement && typeof html2canvas !== 'undefined') {
+                        const canvas = await html2canvas(posterElement, {
+                            scale: 2,
+                            useCORS: true,
+                            allowTaint: false,
+                            backgroundColor: "#FFFDF9"
+                        });
+                        
+                        // Download poster automatically for the user so it's ready in gallery/downloads
+                        const imageLink = document.createElement('a');
+                        imageLink.download = `Smart_Shelf_Flash_Deals_Poster.png`;
+                        imageLink.href = canvas.toDataURL('image/png');
+                        imageLink.click();
+
+                        // Convert canvas to blob & File for native system share & image clipboard
+                        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+                        if (blob) {
+                            posterFile = new File([blob], 'Smart_Shelf_Flash_Deals_Poster.png', { type: 'image/png' });
+                            
+                            // Copy poster image directly to system clipboard if supported
+                            if (navigator.clipboard && window.ClipboardItem) {
+                                try {
+                                    await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+                                    console.log("Poster image successfully copied to system clipboard!");
+                                } catch (clipImgErr) {
+                                    console.log("Clipboard image write not supported, relying on file share/download", clipImgErr);
+                                }
+                            }
+                        }
+                    }
+                } catch (canvasErr) {
+                    console.warn("Could not capture poster image for share:", canvasErr);
                 }
 
                 // 2. Prepare payload for backend
@@ -2000,17 +2032,33 @@
 
                 currentBroadcastResponse = result;
 
-                // 3. Open WhatsApp Direct Share with pre-filled deals text and Instagram
+                // 3. Open WhatsApp with Generated Poster & Pre-filled Deals Text
                 if (channel === 'ALL' || channel === 'WHATSAPP') {
                     const waMessage = result.whatsapp ? result.whatsapp.message : '';
-                    if (waMessage) {
+                    
+                    // Priority A: If mobile/desktop supports Web Share API with files (Android, iOS, Chrome, Edge), share the actual POSTER image + message directly into WhatsApp!
+                    let sharedNatively = false;
+                    if (posterFile && navigator.canShare && navigator.canShare({ files: [posterFile] })) {
                         try {
-                            await navigator.clipboard.writeText(waMessage);
-                        } catch(e) {}
+                            await navigator.share({
+                                files: [posterFile],
+                                title: 'Smart Shelf Flash Deals',
+                                text: waMessage
+                            });
+                            sharedNatively = true;
+                        } catch (shareErr) {
+                            if (shareErr.name !== 'AbortError') {
+                                console.log("Native file share was dismissed or not completed:", shareErr);
+                            }
+                        }
                     }
-                    // Auto-fill WhatsApp direct share intent: immediately pre-fills the message in WhatsApp!
-                    const shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(waMessage)}`;
-                    window.open(shareUrl, '_blank');
+
+                    // Priority B: If native file share wasn't used, open WhatsApp Web/App with message pre-filled.
+                    // The high-res poster image has already been automatically downloaded to Downloads/Gallery AND copied to clipboard so you can hit attach (📎) or paste (Ctrl+V) instantly!
+                    if (!sharedNatively) {
+                        const shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(waMessage)}`;
+                        window.open(shareUrl, '_blank');
+                    }
                 }
 
                 if (channel === 'ALL' || channel === 'INSTAGRAM') {
