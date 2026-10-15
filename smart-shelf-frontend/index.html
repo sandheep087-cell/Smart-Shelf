@@ -2037,9 +2037,12 @@
                 if (channel === 'ALL' || channel === 'WHATSAPP') {
                     const waMessage = result.whatsapp ? result.whatsapp.message : '';
                     
-                    // Priority A: If mobile/desktop supports Web Share API with files (Android, iOS, Chrome, Edge), share the actual POSTER image + message directly into WhatsApp!
+                    // On Desktop, opening web.whatsapp.com directly takes the user to their active WhatsApp Web tab!
+                    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+                    // Priority A: On mobile devices with native file share support, share directly via Web Share API
                     let sharedNatively = false;
-                    if (posterFile && navigator.canShare && navigator.canShare({ files: [posterFile] })) {
+                    if (isMobile && posterFile && navigator.canShare && navigator.canShare({ files: [posterFile] })) {
                         try {
                             await navigator.share({
                                 files: [posterFile],
@@ -2049,16 +2052,19 @@
                             sharedNatively = true;
                         } catch (shareErr) {
                             if (shareErr.name !== 'AbortError') {
-                                console.log("Native file share was dismissed or not completed:", shareErr);
+                                console.log("Native file share dismissed:", shareErr);
                             }
                         }
                     }
 
-                    // Priority B: If native file share wasn't used, open WhatsApp Web/App with message pre-filled.
-                    // The high-res poster image has already been automatically downloaded to Downloads/Gallery AND copied to clipboard so you can hit attach (📎) or paste (Ctrl+V) instantly!
+                    // Priority B: For Web / Desktop (or mobile fallback)
                     if (!sharedNatively) {
-                        const shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(waMessage)}`;
-                        window.open(shareUrl, '_blank');
+                        // On desktop, use https://web.whatsapp.com/send?text=... so it opens directly in WhatsApp Web in browser!
+                        const targetUrl = isMobile 
+                            ? `https://api.whatsapp.com/send?text=${encodeURIComponent(waMessage)}`
+                            : `https://web.whatsapp.com/send?text=${encodeURIComponent(waMessage)}`;
+                        
+                        window.open(targetUrl, '_blank');
                     }
                 }
 
@@ -2099,7 +2105,10 @@
             }
             if (result.whatsapp && modalWaLink) {
                 const waMessage = result.whatsapp.message || '';
-                modalWaLink.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(waMessage)}`;
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                modalWaLink.href = isMobile 
+                    ? `https://api.whatsapp.com/send?text=${encodeURIComponent(waMessage)}`
+                    : `https://web.whatsapp.com/send?text=${encodeURIComponent(waMessage)}`;
             }
             if (result.instagram && modalIgPreview) {
                 modalIgPreview.textContent = result.instagram.caption || '';
