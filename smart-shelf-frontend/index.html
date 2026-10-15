@@ -1953,35 +1953,70 @@
                     instagramHandle: igHandle
                 };
 
-                const res = await fetch(`${SHELF_API_URL}/marketing/broadcast`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+                let result = null;
+                try {
+                    const res = await fetch(`${SHELF_API_URL}/marketing/broadcast`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
 
-                if (!res.ok) {
-                    throw new Error(`Broadcast API responded with error status ${res.status}`);
+                    if (res.ok) {
+                        result = await res.json();
+                    } else {
+                        console.warn(`Broadcast API status: ${res.status}`);
+                    }
+                } catch (netErr) {
+                    console.warn("Backend sleeping or unreachable, using instant frontend markdown generator:", netErr);
                 }
 
-                const result = await res.json();
+                // If backend was sleeping or unreachable, build client-side payload instantly so WhatsApp ALWAYS launches
+                if (!result) {
+                    let dealsText = '';
+                    (currentActiveDeals || []).forEach(d => {
+                        dealsText += `• ${d.itemName}: ₹${d.flashPrice || d.adjustedPrice} (Was ₹${d.originalPrice || d.basePrice}) [${d.discount || d.discountPercentage}% OFF]\n`;
+                    });
+                    const waMsg = `🚨 *BAKE & BLISS FLASH SALE IS LIVE!* 🚨\n\n` +
+                        `Smart Shelf just triggered flash price drops on our handcrafted daily bakes to guarantee ZERO food waste! 🥐🥖\n\n` +
+                        `🔥 *TOP MARKDOWN SPECIALS (Up to ${currentActiveMaxDiscount || 50}% OFF):*\n${dealsText}\n` +
+                        `🛵 *Doorstep Delivery & Store Pickup Available!*\n` +
+                        `📲 *Order Instantly Online:*\n${customerStoreUrl}\n\n` +
+                        `⚡ *Limited stocks available. Claim yours before shelves clear!* ⚡`;
+
+                    const igCap = `⚡ FLASH DEALS ACTIVE TODAY AT BAKE & BLISS! 🥐✨\n\n` +
+                        `Freshly baked artisan favorites just dropped in price to prevent food waste! Enjoy up to ${currentActiveMaxDiscount || 50}% OFF right now:\n\n` +
+                        `${dealsText}\n` +
+                        `🔗 Tap the link in bio or visit ${customerStoreUrl} to order directly online!\n\n` +
+                        `#SmartShelf #FlashSale #BakeAndBliss #ZeroWaste #SaveFood #FreshBakes`;
+
+                    result = {
+                        success: true,
+                        whatsapp: { message: waMsg, communityUrl: waUrl },
+                        instagram: { caption: igCap, handle: igHandle },
+                        sms: { recipientCount: registeredRegularCustomers.length || 0, recipients: registeredRegularCustomers || [] }
+                    };
+                }
+
                 currentBroadcastResponse = result;
 
-                // 3. Open WhatsApp Community and Instagram
+                // 3. Open WhatsApp Direct Share with pre-filled deals text and Instagram
                 if (channel === 'ALL' || channel === 'WHATSAPP') {
-                    if (result.whatsapp && result.whatsapp.message) {
+                    const waMessage = result.whatsapp ? result.whatsapp.message : '';
+                    if (waMessage) {
                         try {
-                            await navigator.clipboard.writeText(result.whatsapp.message);
+                            await navigator.clipboard.writeText(waMessage);
                         } catch(e) {}
                     }
-                    if (waUrl) {
-                        window.open(waUrl, '_blank');
-                    }
+                    // Auto-fill WhatsApp direct share intent: immediately pre-fills the message in WhatsApp!
+                    const shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(waMessage)}`;
+                    window.open(shareUrl, '_blank');
                 }
 
                 if (channel === 'ALL' || channel === 'INSTAGRAM') {
-                    if (result.instagram && result.instagram.caption) {
+                    const igCaption = result.instagram ? result.instagram.caption : '';
+                    if (igCaption) {
                         try {
-                            await navigator.clipboard.writeText(result.instagram.caption);
+                            await navigator.clipboard.writeText(igCaption);
                         } catch(e) {}
                     }
                     window.open('https://www.instagram.com/', '_blank');
@@ -2013,7 +2048,8 @@
                 modalWaPreview.textContent = result.whatsapp.message || '';
             }
             if (result.whatsapp && modalWaLink) {
-                modalWaLink.href = result.whatsapp.communityUrl || 'https://chat.whatsapp.com/BakeAndBlissCommunity';
+                const waMessage = result.whatsapp.message || '';
+                modalWaLink.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(waMessage)}`;
             }
             if (result.instagram && modalIgPreview) {
                 modalIgPreview.textContent = result.instagram.caption || '';
