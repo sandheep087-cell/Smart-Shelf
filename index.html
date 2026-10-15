@@ -1989,11 +1989,12 @@
                         `🔗 Tap the link in bio or visit ${customerStoreUrl} to order directly online!\n\n` +
                         `#SmartShelf #FlashSale #BakeAndBliss #ZeroWaste #SaveFood #FreshBakes`;
 
+                    const customersList = (typeof cachedRegularCustomers !== 'undefined' && Array.isArray(cachedRegularCustomers)) ? cachedRegularCustomers : [];
                     result = {
                         success: true,
                         whatsapp: { message: waMsg, communityUrl: waUrl },
                         instagram: { caption: igCap, handle: igHandle },
-                        sms: { recipientCount: registeredRegularCustomers.length || 0, recipients: registeredRegularCustomers || [] }
+                        sms: { recipientCount: customersList.length, recipients: customersList }
                     };
                 }
 
