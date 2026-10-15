@@ -51,4 +51,10 @@ public class OnlineOrder {
     public void setStatus(String status) { this.status = status; }
     public String getTimestamp() { return timestamp; }
     public void setTimestamp(String timestamp) { this.timestamp = timestamp; }
+
+    @jakarta.persistence.Transient
+    private java.util.List<java.util.Map<String, Object>> items;
+
+    public java.util.List<java.util.Map<String, Object>> getItems() { return items; }
+    public void setItems(java.util.List<java.util.Map<String, Object>> items) { this.items = items; }
 }

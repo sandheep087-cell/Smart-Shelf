@@ -67,9 +67,7 @@ public class ShelfController {
 
     @DeleteMapping("/products/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-        List<InventoryItem> items = inventoryRepository.findAll().stream()
-                .filter(i -> i.getProduct() != null && i.getProduct().getId().equals(id))
-                .toList();
+        List<InventoryItem> items = inventoryRepository.findByProductId(id);
         inventoryRepository.deleteAll(items);
         productRepository.deleteById(id);
         return ResponseEntity.ok().build();
@@ -91,9 +89,7 @@ public class ShelfController {
         }
 
         // Find the existing inventory item for this product or create one for today.
-        InventoryItem item = inventoryRepository.findAll().stream()
-                .filter(i -> i.getProduct() != null && i.getProduct().getId().equals(productId))
-                .findFirst()
+        InventoryItem item = inventoryRepository.findFirstByProductId(productId)
                 .orElse(new InventoryItem());
 
         if (item.getId() == null) {

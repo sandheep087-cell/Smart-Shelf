@@ -3,10 +3,16 @@ package com.smartshelf.service;
 import com.smartshelf.model.InventoryItem;
 import com.smartshelf.repository.InventoryRepository;
 import com.smartshelf.repository.StoreSettingsRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 public class InventoryEvaluationService {
+
+    private static final Logger log = LoggerFactory.getLogger(InventoryEvaluationService.class);
 
     private final InventoryRepository inventoryRepository;
     private final SmartShelfEngine shelfEngine;
@@ -36,8 +42,23 @@ public class InventoryEvaluationService {
         weatherPricingService.evaluateWeatherCondition(weatherCondition);
         double weatherPenalty = weatherService.getWeatherPenalty(weatherCondition);
 
+        LocalDateTime now = LocalDateTime.now();
+        int expiredCount = 0;
+
         for (InventoryItem item : inventoryRepository.findAllWithProducts()) {
-            shelfEngine.evaluateItem(item, weatherPenalty, weatherCondition, false, 1.0);
+            if (item.getExpiresAt() != null && now.isAfter(item.getExpiresAt())) {
+                if (item.getCurrentQuantity() > 0 || !"EXPIRED".equals(item.getStatus())) {
+                    item.setCurrentQuantity(0);
+                    item.setStatus("EXPIRED");
+                    inventoryRepository.save(item);
+                    expiredCount++;
+                }
+            }
+            shelfEngine.evaluateItem(item, weatherPenalty, weatherCondition, storeService.isRainDiscountApproved(), 1.0);
+        }
+
+        if (expiredCount > 0) {
+            log.info("Continuous evaluation completed: Marked {} items as EXPIRED.", expiredCount);
         }
     }
 }
