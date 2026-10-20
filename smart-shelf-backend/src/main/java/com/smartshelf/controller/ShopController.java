@@ -39,6 +39,7 @@ public class ShopController {
     private final WeatherService weatherService;
     private final StoreService storeService;
     private final CustomerRepository customerRepository;
+    private final com.smartshelf.service.InventoryEvaluationService inventoryEvaluationService;
 
     public ShopController(InventoryRepository inventoryRepository,
             OnlineOrderRepository orderRepository,
@@ -46,7 +47,8 @@ public class ShopController {
             SmartShelfEngine shelfEngine,
             WeatherService weatherService,
             StoreService storeService,
-            CustomerRepository customerRepository) {
+            CustomerRepository customerRepository,
+            com.smartshelf.service.InventoryEvaluationService inventoryEvaluationService) {
         this.inventoryRepository = inventoryRepository;
         this.orderRepository = orderRepository;
         this.salesOrderRepository = salesOrderRepository;
@@ -54,6 +56,7 @@ public class ShopController {
         this.weatherService = weatherService;
         this.storeService = storeService;
         this.customerRepository = customerRepository;
+        this.inventoryEvaluationService = inventoryEvaluationService;
     }
 
     @GetMapping("/menu")
@@ -153,6 +156,11 @@ public class ShopController {
                     }
                     totalItemCount += requestedQty;
                 }
+            }
+            try {
+                inventoryEvaluationService.evaluateInventory();
+            } catch (Exception e) {
+                // ignore evaluation error during checkout
             }
         }
 
