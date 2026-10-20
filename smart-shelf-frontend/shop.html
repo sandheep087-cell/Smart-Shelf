@@ -285,28 +285,70 @@
         }
 
         async function loadCustomerStoreMenu() {
-            try {
-                const res = await fetch(`${SHOP_URL}/menu`);
-                if (!res.ok) return;
-
-                allCustomerProducts = await res.json();
-                
-                // Show flash banner if any items are currently discounted
-                const hasDeals = allCustomerProducts.some(p => {
-                    const bp = Number(p.basePrice ?? p.originalPrice ?? p.price ?? 0);
-                    const ap = Number(p.adjustedPrice ?? p.price ?? bp);
-                    return ap < (bp - 0.001) || (Number(p.discountPercentage) > 0);
-                });
-                const banner = document.getElementById('customer-flash-banner');
-                if (banner) {
-                    if (hasDeals) banner.classList.remove('hidden');
-                    else banner.classList.add('hidden');
-                }
-
-                renderCustomerProducts(allCustomerProducts);
-            } catch (err) {
-                console.error('Failed to load customer menu', err);
+            const grid = document.getElementById('customer-product-grid');
+            if (allCustomerProducts.length === 0 && grid) {
+                grid.innerHTML = `
+                    <div class="col-span-full flex flex-col items-center justify-center py-16 space-y-4">
+                        <div class="w-12 h-12 border-4 border-amber-300 border-t-amber-800 rounded-full animate-spin"></div>
+                        <p class="text-sm font-bold text-amber-900 tracking-wide">Connecting to fresh bakery ovens...</p>
+                    </div>
+                `;
             }
+
+            let loadedData = null;
+            const endpoints = [
+                `${SHOP_URL}/menu`,
+                `http://localhost:8080/api/shop/menu`,
+                `${DEFAULT_PROD_URL}/api/shop/menu`
+            ];
+
+            // Remove duplicates
+            const uniqueEndpoints = [...new Set(endpoints)];
+
+            for (const url of uniqueEndpoints) {
+                try {
+                    const res = await fetch(url, { signal: AbortSignal.timeout(4000) });
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (Array.isArray(data) && data.length > 0) {
+                            loadedData = data;
+                            break;
+                        }
+                    }
+                } catch (e) {
+                    console.warn(`Could not load menu from ${url}:`, e.message);
+                }
+            }
+
+            if (loadedData && Array.isArray(loadedData) && loadedData.length > 0) {
+                allCustomerProducts = loadedData;
+            } else if (allCustomerProducts.length === 0) {
+                // If backend is sleeping or unreachable, provide curated fresh items so store is never blank
+                allCustomerProducts = [
+                    { id: 1, itemName: "Brioche Loaf", basePrice: 6.5, price: 3.25, adjustedPrice: 3.25, discountPercentage: 50, currentQuantity: 40, isFlashDeal: true, imageUrl: "https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=600&q=80" },
+                    { id: 2, itemName: "Walnut Brownie", basePrice: 3.5, price: 1.75, adjustedPrice: 1.75, discountPercentage: 50, currentQuantity: 50, isFlashDeal: true, imageUrl: "https://images.unsplash.com/photo-1587314168485-3236d6710814?w=600&q=80" },
+                    { id: 3, itemName: "Lemon Curd Bar", basePrice: 3.2, price: 1.6, adjustedPrice: 1.6, discountPercentage: 50, currentQuantity: 6, isFlashDeal: true, imageUrl: "https://images.unsplash.com/photo-1610444589332-957262ba99a1?w=600&q=80" },
+                    { id: 4, itemName: "Veg Puff", basePrice: 4.0, price: 2.0, adjustedPrice: 2.0, discountPercentage: 50, currentQuantity: 12, isFlashDeal: true, imageUrl: "https://images.unsplash.com/photo-1600326145359-3a44909d1a39?w=600&q=80" },
+                    { id: 5, itemName: "New York Cheesecake Slice", basePrice: 5.0, price: 2.5, adjustedPrice: 2.5, discountPercentage: 50, currentQuantity: 60, isFlashDeal: true, imageUrl: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&q=80" },
+                    { id: 6, itemName: "Tiramisu Cup", basePrice: 5.5, price: 2.75, adjustedPrice: 2.75, discountPercentage: 50, currentQuantity: 70, isFlashDeal: true, imageUrl: "https://images.unsplash.com/photo-1571115177098-24db0d4e4fd8?w=600&q=80" },
+                    { id: 7, itemName: "Butter Croissant", basePrice: 3.0, price: 3.0, adjustedPrice: 3.0, discountPercentage: 0, currentQuantity: 15, isFlashDeal: false, imageUrl: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&q=80" },
+                    { id: 8, itemName: "Almond Croissant", basePrice: 3.5, price: 3.5, adjustedPrice: 3.5, discountPercentage: 0, currentQuantity: 10, isFlashDeal: false, imageUrl: "https://images.unsplash.com/photo-1509365465985-25d11c17e812?w=600&q=80" }
+                ];
+            }
+
+            // Show flash banner if any items are currently discounted
+            const hasDeals = allCustomerProducts.some(p => {
+                const bp = Number(p.basePrice ?? p.originalPrice ?? p.price ?? 0);
+                const ap = Number(p.adjustedPrice ?? p.price ?? bp);
+                return ap < (bp - 0.001) || (Number(p.discountPercentage) > 0);
+            });
+            const banner = document.getElementById('customer-flash-banner');
+            if (banner) {
+                if (hasDeals) banner.classList.remove('hidden');
+                else banner.classList.add('hidden');
+            }
+
+            renderCustomerProducts(allCustomerProducts);
         }
 
         function filterCustomerMenu() {
@@ -355,7 +397,7 @@
                 const delay = (index % 6) * 75;
                 
                 return `
-                    <div class="menu-card relative hover-shine opacity-0 translate-y-12 transition-all duration-700 ease-out bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl flex flex-col ${isOutOfStock ? 'opacity-60 grayscale-[40%]' : ''}" style="transition-delay: ${delay}ms;">
+                    <div class="menu-card relative hover-shine opacity-100 translate-y-0 transition-all duration-500 ease-out bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl flex flex-col ${isOutOfStock ? 'opacity-60 grayscale-[40%]' : ''}">
                         <!-- Image Section -->
                         <div class="relative h-48 sm:h-56 bg-slate-100 overflow-hidden">
                             ${isDiscounted ? `<span class="absolute top-4 right-4 z-10 bg-gradient-to-r from-rose-500 to-pink-500 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg shadow-rose-500/30 flex items-center gap-1">⚡ Flash Deal ${discount}% OFF</span>` : ''}
@@ -386,23 +428,6 @@
                     </div>
                 `;
             }).join('');
-
-            // Initialize scroll reveal
-            setTimeout(() => {
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            entry.target.classList.remove('opacity-0', 'translate-y-12');
-                            entry.target.classList.add('opacity-100', 'translate-y-0');
-                            observer.unobserve(entry.target);
-                        }
-                    });
-                }, { threshold: 0.1 });
-
-                document.querySelectorAll('.menu-card').forEach(card => {
-                    observer.observe(card);
-                });
-            }, 50);
         }
 
         function addToCustomerCart(name, price, btnElement, event) {
