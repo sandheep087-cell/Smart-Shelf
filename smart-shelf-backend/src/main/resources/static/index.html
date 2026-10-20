@@ -1339,6 +1339,9 @@
                 checkStoreStatus();
                 loadWeatherDisplay();
                 loadDashboardData();
+                if (typeof loadCustomerStoreMenu === 'function') {
+                    loadCustomerStoreMenu();
+                }
             } catch (err) {
                 console.error('Failed to fetch store status', err);
             }
