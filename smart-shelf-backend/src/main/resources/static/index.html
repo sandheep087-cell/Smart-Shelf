@@ -1167,12 +1167,16 @@
                 || normalizedCondition.includes('drizzle')
                 || normalizedCondition.includes('storm');
 
-            if (isRaining && !rainEffectInitialized) {
+            const stormAlreadyShown = sessionStorage.getItem('storm_animation_shown') === 'true';
+
+            if (isRaining && !rainEffectInitialized && !stormAlreadyShown) {
                 triggerCinematicStorm();
                 rainEffectInitialized = true;
+                sessionStorage.setItem('storm_animation_shown', 'true');
                 console.log('Rain effect triggered for the first time.');
             } else if (!isRaining) {
                 rainEffectInitialized = false;
+                sessionStorage.removeItem('storm_animation_shown');
             }
         }
 
@@ -1315,7 +1319,6 @@
                 const res = await fetch(`${API_URL}/api/store/status`);
                 if (!res.ok) return;
                 const data = await res.json();
-                updateStoreUIState(data.isOpen);
                 if (data.closingTime) {
                     const [h, m] = data.closingTime.split(':').map(Number);
                     closingHour = h;
@@ -1327,7 +1330,15 @@
                 }
                 if (data.rainDiscountApproved !== undefined) {
                     rainDiscountApproved = data.rainDiscountApproved;
+                    if (rainDiscountApproved) {
+                        document.getElementById('rain-approval-banner')?.classList.add('hidden');
+                        document.getElementById('weather-card-approval')?.classList.add('hidden');
+                    }
                 }
+                updateStoreUIState(data.isOpen);
+                checkStoreStatus();
+                loadWeatherDisplay();
+                loadDashboardData();
             } catch (err) {
                 console.error('Failed to fetch store status', err);
             }
