@@ -1451,7 +1451,7 @@
 
         async function loadCustomerStoreMenu() {
             try {
-                const res = await fetch(`${SHOP_URL}/menu`);
+                const res = await fetch(`${SHOP_URL}/menu?rainDiscountApproved=${rainDiscountApproved}`);
                 if (!res.ok) return;
 
                 allCustomerProducts = await res.json();

@@ -57,10 +57,11 @@ public class ShopController {
     }
 
     @GetMapping("/menu")
-    public ResponseEntity<List<Map<String, Object>>> getCustomerMenu() {
+    public ResponseEntity<List<Map<String, Object>>> getCustomerMenu(
+            @org.springframework.web.bind.annotation.RequestParam(required = false) Boolean rainDiscountApproved) {
         double weatherPenalty = weatherService.fetchWeatherPenalty();
         String weatherCondition = weatherService.fetchWeatherCondition();
-        boolean rainApproved = storeService.isRainDiscountApproved();
+        boolean rainApproved = (rainDiscountApproved != null) ? rainDiscountApproved : storeService.isRainDiscountApproved();
         List<Map<String, Object>> menuItems = new ArrayList<>();
 
         for (InventoryItem item : inventoryRepository.findAllWithProducts()) {
