@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bake & Bliss — Artisanal Online Bakery Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;0,900;1,600;1,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+        @keyframes shimmer {
+            100% { transform: translateX(100%); }
+        }
+        .hover-shine::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
+            transform: translateX(-100%);
+            z-index: 20;
+            pointer-events: none;
+        }
+        .hover-shine:hover::after {
+            animation: shimmer 1s ease-in-out;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #fcd34d;
+            border-radius: 10px;
+        }
+
+        /* Cart Bounce & Flying Animation */
+        @keyframes cartPulse {
+            0% { transform: scale(1); }
+            30% { transform: scale(1.25) rotate(-10deg); }
+            60% { transform: scale(0.92) rotate(6deg); }
+            80% { transform: scale(1.08) rotate(-3deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .animate-cart-bounce {
+            animation: cartPulse 0.65s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes rippleWave {
+            0% { transform: scale(0.7); opacity: 0.9; }
+            100% { transform: scale(2.2); opacity: 0; }
+        }
+        .cart-ripple-effect {
+            position: absolute;
+            inset: -4px;
+            border-radius: 9999px;
+            border: 2px solid #f59e0b;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.35) 0%, transparent 70%);
+            pointer-events: none;
+            animation: rippleWave 0.75s ease-out forwards;
+        }
+
+        @keyframes badgePop {
+            0% { transform: scale(0.3); }
+            50% { transform: scale(1.4); }
+            100% { transform: scale(1); }
+        }
+        .animate-badge-pop {
+            animation: badgePop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .fly-to-cart-item {
+            position: fixed;
+            z-index: 99999;
+            pointer-events: none;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(74, 54, 47, 0.45), 0 0 15px rgba(245, 158, 11, 0.5);
+            border: 3px solid #fbbf24;
+            background: #ffffff;
+            will-change: transform, opacity;
+        }
+
+        #floating-cart-btn {
+            position: fixed !important;
+            bottom: 24px !important;
+            right: 24px !important;
+            z-index: 50 !important;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-[#faf9f6] text-amber-950 font-sans relative antialiased selection:bg-amber-200">
+
+    <!-- Background Decorative Blobs Container -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute top-20 -left-20 w-96 h-96 bg-amber-200/40 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-pulse"
+            style="animation-duration: 8s;"></div>
+        <div class="absolute top-96 right-10 w-[30rem] h-[30rem] bg-rose-200/30 rounded-full mix-blend-multiply filter blur-[120px] opacity-70 animate-pulse"
+            style="animation-duration: 10s;"></div>
+        <div class="absolute bottom-20 left-1/3 w-80 h-80 bg-amber-100/50 rounded-full mix-blend-multiply filter blur-[90px] opacity-60 animate-pulse"
+            style="animation-duration: 12s;"></div>
+    </div>
+
+    <!-- Hero Header -->
+    <header class="relative overflow-hidden bg-slate-900 text-white py-10 md:py-16 px-4 md:px-6 shadow-2xl mb-10 rounded-b-[2.5rem] md:rounded-b-[3.5rem] z-10">
+        <!-- Background Image & Overlay -->
+        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=2072&auto=format&fit=crop')] bg-cover bg-center opacity-30"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/70 to-slate-900/40"></div>
+
+        <div class="relative max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="text-center md:text-left space-y-2">
+                <div class="inline-flex items-center gap-2 bg-amber-500/20 backdrop-blur-md border border-amber-400/30 px-3.5 py-1 rounded-full">
+                    <span class="text-xs font-black text-amber-300 tracking-[0.25em] uppercase">Est. 2026 • Artisanal Bakery</span>
+                </div>
+                <h1 class="font-serif text-3xl sm:text-5xl md:text-6xl font-black italic tracking-wide text-white drop-shadow-md">
+                    Bake & Bliss
+                </h1>
+                <p class="text-sm text-slate-300 font-medium tracking-wide max-w-lg">
+                    Handcrafted European sourdough, viennoiserie & decadent cakes baked fresh daily. Freshness guaranteed right from our ovens to your doorstep.
+                </p>
+            </div>
+            
+            <!-- Header Cart Total Trigger -->
+            <div id="header-cart-btn" onclick="toggleCartModal()"
+                class="cursor-pointer flex items-center gap-4 bg-white/10 backdrop-blur-xl px-6 py-4 rounded-3xl border border-white/20 shadow-2xl hover:scale-105 transition-transform duration-300 group">
+                <span class="text-3xl drop-shadow-md group-hover:scale-110 transition-transform">🛒</span>
+                <div>
+                    <span class="text-[10px] block font-bold text-amber-200 uppercase tracking-widest opacity-90">Cart Total</span>
+                    <span id="cart-total-badge-header" class="font-serif font-black text-2xl text-white tracking-tight">₹0.00</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 pb-28 relative z-10">
+
+        <!-- Cart Modal Sidebar -->
+        <div id="cart-modal" class="fixed inset-0 z-[60] bg-slate-950/50 backdrop-blur-sm hidden flex justify-end">
+            <div class="bg-[#faf9f6] w-full max-w-md h-full shadow-2xl flex flex-col relative translate-x-full transition-transform duration-300" id="cart-modal-content">
+                <!-- Header -->
+                <div class="p-6 bg-white border-b border-amber-100 flex items-center justify-between">
+                    <h3 class="font-serif text-2xl font-black text-amber-950 flex items-center gap-2">
+                        <span>🛍️</span> Your Basket
+                    </h3>
+                    <button onclick="toggleCartModal()" class="text-slate-400 hover:text-amber-950 transition-colors text-3xl leading-none">&times;</button>
+                </div>
+
+                <!-- Items List -->
+                <div class="p-6 flex-1 overflow-y-auto custom-scrollbar flex flex-col gap-3" id="cart-items-container">
+                    <p class="text-sm text-slate-400 italic text-center mt-10">Your cart is gently resting empty.</p>
+                </div>
+
+                <!-- Footer / Checkout -->
+                <div class="p-6 bg-white border-t border-amber-100 space-y-4 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)]">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-bold text-slate-500 text-sm uppercase tracking-widest">Total</span>
+                        <span id="cart-total-badge-sticky" class="font-serif font-black text-2xl text-amber-900">₹0.00</span>
+                    </div>
+
+                    <!-- Delivery Details -->
+                    <div class="space-y-3">
+                        <input type="text" id="cust-name" required placeholder="Full Name *"
+                            class="w-full bg-amber-50/50 border-0 ring-1 ring-amber-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all placeholder:text-slate-400 text-amber-950 font-medium">
+                        <input type="tel" id="cust-phone" required maxlength="10" placeholder="10-Digit Mobile Number *"
+                            class="w-full bg-amber-50/50 border-0 ring-1 ring-amber-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all placeholder:text-slate-400 text-amber-950 font-medium">
+                        <input type="text" id="cust-address" required placeholder="Complete Delivery Address *"
+                            class="w-full bg-amber-50/50 border-0 ring-1 ring-amber-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all placeholder:text-slate-400 text-amber-950 font-medium">
+                    </div>
+                    
+                    <button onclick="handleButtonAction(this, () => submitCustomerCheckout())"
+                        class="w-full bg-[#4a362f] hover:bg-amber-950 text-white font-bold py-3.5 rounded-xl text-sm tracking-wide transition-all shadow-md flex items-center justify-center gap-2 group active:scale-[0.98]">
+                        <span>Secure Checkout</span>
+                        <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Full Width Menu -->
+        <div class="space-y-8">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white/70 backdrop-blur-md p-6 rounded-3xl border border-white shadow-sm gap-4">
+                <div class="flex-1 w-full space-y-4">
+                    <div>
+                        <h2 class="font-serif text-3xl font-black text-slate-800 tracking-tight">Our Fresh Menu</h2>
+                        <p class="text-sm text-slate-500 font-medium mt-1">Discover today's handcrafted selections and flash specials.</p>
+                    </div>
+                    <!-- Search Bar -->
+                    <div class="relative w-full max-w-md">
+                        <span class="absolute inset-y-0 left-4 flex items-center text-slate-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </span>
+                        <input type="text" id="customer-search-input" onkeyup="filterCustomerMenu()"
+                            placeholder="Search for croissants, tarts, sourdough..."
+                            class="w-full bg-white/80 border border-white focus:border-amber-300 focus:ring-4 focus:ring-amber-500/20 rounded-full py-2.5 pl-11 pr-4 text-sm font-medium text-slate-800 shadow-sm placeholder:text-slate-400 transition-all outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Flash Deals Alert Banner -->
+            <div id="customer-flash-banner" class="hidden bg-gradient-to-r from-amber-500 via-rose-500 to-amber-600 text-white p-4 sm:p-5 rounded-3xl shadow-lg flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3.5">
+                    <span class="text-3xl animate-bounce">⚡</span>
+                    <div>
+                        <h3 class="font-serif font-black text-base sm:text-lg uppercase tracking-wide">Live Flash Deals Active!</h3>
+                        <p class="text-xs sm:text-sm text-amber-100 font-medium">Smart Shelf has automatically discounted fresh artisanal treats to guarantee zero food waste. Enjoy up to 50% OFF!</p>
+                    </div>
+                </div>
+                <span class="text-[11px] font-black uppercase bg-white/20 backdrop-blur-sm px-3.5 py-1.5 rounded-full whitespace-nowrap shadow-sm">Limited Time Deals</span>
+            </div>
+
+            <div id="customer-product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8">
+                <!-- Dynamically rendered real products go here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating Cart Button (Fixed to Bottom-Right Corner) -->
+    <button id="floating-cart-btn" onclick="toggleCartModal()"
+        aria-label="View Shopping Basket"
+        class="fixed bottom-6 right-6 z-50 bg-[#4a362f] hover:bg-amber-950 text-white rounded-full w-16 h-16 shadow-2xl transition-transform hover:scale-110 flex items-center justify-center cursor-pointer border-2 border-amber-300/40">
+        <span class="text-3xl" id="floating-cart-icon">🛒</span>
+        <span id="floating-cart-badge" class="absolute -top-2 -right-2 bg-red-600 text-white text-[11px] font-black w-6 h-6 flex items-center justify-center rounded-full shadow-lg border-2 border-white hidden">0</span>
+    </button>
+
+    <footer class="bg-amber-950 text-amber-200/80 text-xs py-8 px-4 text-center border-t border-amber-900/50 relative z-10">
+        <div class="max-w-7xl mx-auto space-y-2">
+            <p class="font-bold text-amber-100">Bake & Bliss Artisanal Bakery</p>
+            <p>Freshly baked everyday • Made with 100% natural organic ingredients</p>
+            <p class="text-[10px] text-amber-400/60 pt-2">Powered by Smart Shelf Dynamic Zero-Waste Automation</p>
+        </div>
+    </footer>
+
+    <script>
+        const DEFAULT_PROD_URL = 'https://smart-shelf-backend-9875.onrender.com';
+        if (localStorage.getItem('SMART_SHELF_API_URL') === 'https://smart-shelf-backend.onrender.com') {
+            localStorage.removeItem('SMART_SHELF_API_URL');
+        }
+        const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:')
+            ? 'http://localhost:8080'
+            : (localStorage.getItem('SMART_SHELF_API_URL') || DEFAULT_PROD_URL);
+        const SHOP_URL = `${API_URL}/api/shop`;
+
+        let customerCart = [];
+        let allCustomerProducts = [];
+
+        async function handleButtonAction(buttonElement, asyncAction) {
+            if (!buttonElement || buttonElement.disabled) return;
+
+            const originalHTML = buttonElement.innerHTML;
+            buttonElement.disabled = true;
+            buttonElement.classList.add('opacity-75', 'cursor-not-allowed');
+            buttonElement.innerHTML = `
+                <span class="inline-flex items-center justify-center gap-2">
+                    <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                    </svg>
+                    Processing...
+                </span>
+            `;
+
+            try {
+                await asyncAction();
+            } catch (error) {
+                console.error('Button action failed:', error);
+            } finally {
+                buttonElement.disabled = false;
+                buttonElement.classList.remove('opacity-75', 'cursor-not-allowed');
+                buttonElement.innerHTML = originalHTML;
+            }
+        }
+
+        async function loadCustomerStoreMenu() {
+            try {
+                const res = await fetch(`${SHOP_URL}/menu`);
+                if (!res.ok) return;
+
+                allCustomerProducts = await res.json();
+                
+                // Show flash banner if any items are currently discounted
+                const hasDeals = allCustomerProducts.some(p => {
+                    const bp = Number(p.basePrice ?? p.originalPrice ?? p.price ?? 0);
+                    const ap = Number(p.adjustedPrice ?? p.price ?? bp);
+                    return ap < (bp - 0.001) || (Number(p.discountPercentage) > 0);
+                });
+                const banner = document.getElementById('customer-flash-banner');
+                if (banner) {
+                    if (hasDeals) banner.classList.remove('hidden');
+                    else banner.classList.add('hidden');
+                }
+
+                renderCustomerProducts(allCustomerProducts);
+            } catch (err) {
+                console.error('Failed to load customer menu', err);
+            }
+        }
+
+        function filterCustomerMenu() {
+            const query = (document.getElementById('customer-search-input').value || '').toLowerCase().trim();
+            if (!query) {
+                renderCustomerProducts(allCustomerProducts);
+                return;
+            }
+            const filtered = allCustomerProducts.filter(p => {
+                const name = String(p.itemName || '').toLowerCase();
+                return name.includes(query);
+            });
+            renderCustomerProducts(filtered);
+        }
+
+        function getImageForItem(name) {
+            const lower = name.toLowerCase();
+            if (lower.includes('vanilla')) return 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=600&auto=format&fit=crop';
+            if (lower.includes('black forest')) return 'https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?q=80&w=600&auto=format&fit=crop';
+            if (lower.includes('strawberry')) return 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?q=80&w=600&auto=format&fit=crop';
+            if (lower.includes('pineapple')) return 'https://images.unsplash.com/photo-1550617931-e17a7b70dce2?q=80&w=600&auto=format&fit=crop';
+            if (lower.includes('white forest')) return 'https://images.unsplash.com/photo-1571115177098-24ec42ed204d?q=80&w=600&auto=format&fit=crop';
+            if (lower.includes('litchi')) return 'https://images.unsplash.com/photo-1587668178277-295251f900ce?q=80&w=600&auto=format&fit=crop';
+            return 'https://images.unsplash.com/photo-1551024506-0bccd828d307?q=80&w=600&auto=format&fit=crop';
+        }
+
+        function renderCustomerProducts(products) {
+            const grid = document.getElementById('customer-product-grid');
+            if (!grid) return;
+
+            if (products.length === 0) {
+                grid.innerHTML = '<p class="col-span-full text-center text-sm font-medium text-slate-400 py-12">No treats found matching your search.</p>';
+                return;
+            }
+
+            grid.innerHTML = products.map((product, index) => {
+                const basePrice = Number(product.basePrice ?? product.originalPrice ?? product.price ?? 0);
+                const adjustedPrice = Number(product.adjustedPrice ?? product.price ?? basePrice);
+                const isDiscounted = adjustedPrice < (basePrice - 0.001);
+                const discount = product.discountPercentage || (basePrice > 0 ? Math.round(((basePrice - adjustedPrice) / basePrice) * 100) : 0);
+                const itemName = String(product.itemName || 'Bakery Item');
+                const safeName = itemName.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+                const imageUrl = product.imageUrl || getImageForItem(itemName);
+                const currentQty = Number(product.currentQuantity ?? 0);
+                const isOutOfStock = currentQty <= 0;
+                const delay = (index % 6) * 75;
+                
+                return `
+                    <div class="menu-card relative hover-shine opacity-0 translate-y-12 transition-all duration-700 ease-out bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl flex flex-col ${isOutOfStock ? 'opacity-60 grayscale-[40%]' : ''}" style="transition-delay: ${delay}ms;">
+                        <!-- Image Section -->
+                        <div class="relative h-48 sm:h-56 bg-slate-100 overflow-hidden">
+                            ${isDiscounted ? `<span class="absolute top-4 right-4 z-10 bg-gradient-to-r from-rose-500 to-pink-500 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg shadow-rose-500/30 flex items-center gap-1">⚡ Flash Deal ${discount}% OFF</span>` : ''}
+                            <img src="${imageUrl}" alt="${itemName}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" loading="lazy" />
+                            <!-- Category Badge -->
+                            <span class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-md text-amber-950 px-4 py-1.5 rounded-full text-xs font-bold shadow-sm">
+                                ${itemName}
+                            </span>
+                        </div>
+                        <!-- Content Section -->
+                        <div class="p-4 sm:p-6 flex flex-col flex-grow justify-between">
+                            <div class="mb-4">
+                                <div class="flex items-start justify-between gap-2">
+                                    <h4 class="font-serif font-black text-amber-950 text-lg sm:text-2xl leading-tight">${itemName}</h4>
+                                    <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full whitespace-nowrap ${currentQty <= 3 ? 'bg-rose-100 text-rose-700 border border-rose-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">
+                                        ${currentQty} left
+                                    </span>
+                                </div>
+                                <div class="flex items-baseline gap-2 pt-2">
+                                    <span class="text-xl font-black ${isDiscounted ? 'text-rose-600' : 'text-slate-900'}">₹${adjustedPrice.toFixed(2)}</span>
+                                    ${isDiscounted ? `<span class="text-xs line-through text-slate-400 font-bold">₹${basePrice.toFixed(2)}</span><span class="text-[10px] font-black text-rose-600 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-full">Save ${discount}%</span>` : ''}
+                                </div>
+                            </div>
+                            <button onclick="addToCustomerCart('${safeName}', ${adjustedPrice}, this, event)" ${isOutOfStock ? 'disabled' : ''} class="w-full ${isOutOfStock ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#4a362f] hover:bg-amber-950 active:scale-95'} text-white font-bold py-2.5 sm:py-3.5 rounded-full text-sm flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md cursor-pointer">
+                                <span>${isOutOfStock ? 'Sold Out' : '+ Add to Basket'}</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Initialize scroll reveal
+            setTimeout(() => {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.remove('opacity-0', 'translate-y-12');
+                            entry.target.classList.add('opacity-100', 'translate-y-0');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                document.querySelectorAll('.menu-card').forEach(card => {
+                    observer.observe(card);
+                });
+            }, 50);
+        }
+
+        function addToCustomerCart(name, price, btnElement, event) {
+            customerCart.push({ name, price: Number(price) });
+            renderCustomerCartUI();
+            triggerFlyToBasketAnimation(name, btnElement, event);
+        }
+
+        function triggerFlyToBasketAnimation(name, btnElement, event) {
+            const cartBtn = document.getElementById('floating-cart-btn');
+
+            if (btnElement && !btnElement._isAnimating) {
+                btnElement._isAnimating = true;
+                const originalHtml = btnElement.innerHTML;
+                const originalClass = btnElement.className;
+
+                btnElement.innerHTML = `
+                    <span class="inline-flex items-center gap-1.5 text-emerald-300 font-black animate-badge-pop">
+                        <svg class="w-4 h-4 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Added!
+                    </span>
+                `;
+                btnElement.classList.remove('bg-[#4a362f]', 'hover:bg-amber-950');
+                btnElement.classList.add('bg-emerald-900', 'hover:bg-emerald-800');
+
+                setTimeout(() => {
+                    btnElement.innerHTML = originalHtml;
+                    btnElement.className = originalClass;
+                    btnElement._isAnimating = false;
+                }, 1300);
+            }
+
+            if (!cartBtn) return;
+
+            let startX = window.innerWidth / 2;
+            let startY = window.innerHeight / 2;
+            let previewImgSrc = '';
+
+            let card = btnElement && btnElement.closest ? btnElement.closest('.menu-card') : null;
+            if (card) {
+                const img = card.querySelector('img');
+                if (img) {
+                    const imgRect = img.getBoundingClientRect();
+                    startX = imgRect.left + imgRect.width / 2;
+                    startY = imgRect.top + imgRect.height / 2;
+                    previewImgSrc = img.src;
+                } else if (btnElement && btnElement.getBoundingClientRect) {
+                    const btnRect = btnElement.getBoundingClientRect();
+                    startX = btnRect.left + btnRect.width / 2;
+                    startY = btnRect.top + btnRect.height / 2;
+                }
+            } else if (btnElement && btnElement.getBoundingClientRect) {
+                const btnRect = btnElement.getBoundingClientRect();
+                startX = btnRect.left + btnRect.width / 2;
+                startY = btnRect.top + btnRect.height / 2;
+            } else if (event && event.clientX) {
+                startX = event.clientX;
+                startY = event.clientY;
+            }
+
+            if (!previewImgSrc && typeof getImageForItem === 'function') {
+                previewImgSrc = getImageForItem(name);
+            }
+
+            const targetRect = cartBtn.getBoundingClientRect();
+            const targetX = targetRect.left + targetRect.width / 2;
+            const targetY = targetRect.top + targetRect.height / 2;
+
+            const flyerSize = 56;
+            const flyer = document.createElement('div');
+            flyer.className = 'fly-to-cart-item';
+            flyer.style.width = `${flyerSize}px`;
+            flyer.style.height = `${flyerSize}px`;
+            flyer.style.left = `${startX - flyerSize / 2}px`;
+            flyer.style.top = `${startY - flyerSize / 2}px`;
+
+            if (previewImgSrc) {
+                flyer.innerHTML = `<img src="${previewImgSrc}" alt="${name}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />`;
+            } else {
+                flyer.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #fef3c7; font-size: 24px;">🥐</div>`;
+            }
+
+            document.body.appendChild(flyer);
+
+            const deltaX = targetX - startX;
+            const deltaY = targetY - startY;
+
+            const keyframes = [
+                {
+                    transform: 'translate(0px, 0px) scale(1) rotate(0deg)',
+                    opacity: 1,
+                    boxShadow: '0 10px 25px rgba(74, 54, 47, 0.45), 0 0 15px rgba(245, 158, 11, 0.5)'
+                },
+                {
+                    offset: 0.3,
+                    transform: `translate(${deltaX * 0.25}px, ${deltaY * 0.15 - 55}px) scale(1.2) rotate(25deg)`,
+                    opacity: 1,
+                    boxShadow: '0 18px 32px rgba(74, 54, 47, 0.5), 0 0 24px rgba(245, 158, 11, 0.7)'
+                },
+                {
+                    offset: 0.7,
+                    transform: `translate(${deltaX * 0.75}px, ${deltaY * 0.65}px) scale(0.68) rotate(180deg)`,
+                    opacity: 0.95
+                },
+                {
+                    transform: `translate(${deltaX}px, ${deltaY}px) scale(0.15) rotate(360deg)`,
+                    opacity: 0.15
+                }
+            ];
+
+            const animation = flyer.animate(keyframes, {
+                duration: 1100,
+                easing: 'cubic-bezier(0.22, 0.8, 0.36, 1)',
+                fill: 'forwards'
+            });
+
+            animation.onfinish = () => {
+                flyer.remove();
+
+                cartBtn.classList.remove('animate-cart-bounce');
+                void cartBtn.offsetWidth;
+                cartBtn.classList.add('animate-cart-bounce');
+
+                const ripple = document.createElement('div');
+                ripple.className = 'cart-ripple-effect';
+                cartBtn.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 750);
+
+                const badge = document.getElementById('floating-cart-badge');
+                if (badge) {
+                    badge.classList.remove('animate-badge-pop');
+                    void badge.offsetWidth;
+                    badge.classList.add('animate-badge-pop');
+                }
+
+                const headerBadge = document.getElementById('cart-total-badge-header');
+                if (headerBadge) {
+                    headerBadge.animate([
+                        { transform: 'scale(1)', color: '#ffffff' },
+                        { transform: 'scale(1.2)', color: '#fef08a' },
+                        { transform: 'scale(1)', color: '#ffffff' }
+                    ], { duration: 400 });
+                }
+
+                showCartNotificationToast(name);
+            };
+        }
+
+        function showCartNotificationToast(name) {
+            let toast = document.getElementById('cart-toast-notification');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'cart-toast-notification';
+                toast.className = 'fixed bottom-28 right-6 z-50 pointer-events-none transition-all duration-300 opacity-0 translate-y-3';
+                document.body.appendChild(toast);
+            }
+
+            toast.innerHTML = `
+                <div class="bg-slate-900/90 text-white backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-xl border border-amber-500/30 flex items-center gap-2.5 text-xs font-semibold tracking-wide">
+                    <span class="text-base">🛍️</span>
+                    <span>Added <span class="text-amber-300 font-bold">${name}</span> to basket</span>
+                </div>
+            `;
+
+            toast.classList.remove('opacity-0', 'translate-y-3');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            if (toast._timer) clearTimeout(toast._timer);
+            toast._timer = setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'translate-y-3');
+            }, 1800);
+        }
+
+        function removeFromCustomerCart(index) {
+            customerCart.splice(index, 1);
+            renderCustomerCartUI();
+        }
+
+        function renderCustomerCartUI() {
+            const container = document.getElementById('cart-items-container');
+            const totalBadge1 = document.getElementById('cart-total-badge-header');
+            const totalBadge2 = document.getElementById('cart-total-badge-sticky');
+            const badge = document.getElementById('floating-cart-badge');
+            
+            if (!container) return;
+            
+            if (badge) {
+                if (customerCart.length > 0) {
+                    badge.classList.remove('hidden');
+                    badge.innerText = customerCart.length;
+                } else {
+                    badge.classList.add('hidden');
+                }
+            }
+
+            if (customerCart.length === 0) {
+                container.innerHTML = '<p class="text-sm text-slate-400 italic text-center mt-10">Your cart is gently resting empty.</p>';
+                if (totalBadge1) totalBadge1.innerText = '₹0.00';
+                if (totalBadge2) totalBadge2.innerText = '₹0.00';
+                return;
+            }
+            const total = customerCart.reduce((sum, item) => sum + item.price, 0);
+            container.innerHTML = customerCart.map((item, index) => `
+                <div class="flex items-center justify-between bg-amber-50/80 px-4 py-3 rounded-2xl border border-amber-200 text-sm shadow-sm">
+                    <div class="flex flex-col">
+                        <span class="font-bold text-amber-950">${item.name}</span>
+                        <span class="text-amber-700 font-bold">₹${item.price.toFixed(2)}</span>
+                    </div>
+                    <button onclick="removeFromCustomerCart(${index})" class="text-rose-500 hover:text-rose-700 font-black text-xl leading-none transition-colors w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-sm" aria-label="Remove ${item.name}">&times;</button>
+                </div>
+            `).join('');
+            if (totalBadge1) totalBadge1.innerText = `₹${total.toFixed(2)}`;
+            if (totalBadge2) totalBadge2.innerText = `₹${total.toFixed(2)}`;
+        }
+
+        function toggleCartModal() {
+            const modal = document.getElementById('cart-modal');
+            const content = document.getElementById('cart-modal-content');
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    content.classList.remove('translate-x-full');
+                }, 10);
+            } else {
+                content.classList.add('translate-x-full');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        async function submitCustomerCheckout() {
+            const name = document.getElementById('cust-name').value.trim();
+            const phone = document.getElementById('cust-phone').value.trim();
+            const address = document.getElementById('cust-address').value.trim();
+
+            if (customerCart.length === 0) {
+                alert('Your cart is empty! Please add items before checking out.');
+                throw new Error('Empty cart');
+            }
+
+            if (!name || !phone || !address) {
+                alert('Please fill in all required delivery details!');
+                throw new Error('Missing fields');
+            }
+
+            const phoneRegex = /^\d{10}$/;
+            if (!phoneRegex.test(phone)) {
+                alert('Please enter a valid 10-digit mobile number (numbers only).');
+                document.getElementById('cust-phone').focus();
+                throw new Error('Invalid phone number');
+            }
+
+            const orderPayload = {
+                customerName: name,
+                phone,
+                address,
+                items: customerCart,
+                itemsSummary: customerCart.map(item => `${item.name} (₹${item.price.toFixed(2)})`).join(', '),
+                totalAmount: customerCart.reduce((sum, item) => sum + item.price, 0)
+            };
+
+            const res = await fetch(`${SHOP_URL}/checkout`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(orderPayload)
+            });
+
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                const errMsg = errData.message || 'Checkout failed on server. Please check item availability.';
+                alert(errMsg);
+                throw new Error(errMsg);
+            }
+
+            const data = await res.json();
+            alert(`Order placed successfully! Your Order ID is ${data.orderId}. Our bakers will prepare and pack your order shortly.`);
+            customerCart = [];
+            renderCustomerCartUI();
+            toggleCartModal();
+            document.getElementById('cust-name').value = '';
+            document.getElementById('cust-phone').value = '';
+            document.getElementById('cust-address').value = '';
+            loadCustomerStoreMenu();
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadCustomerStoreMenu();
+            // Poll for dynamic flash price or stock updates every 20 seconds
+            setInterval(loadCustomerStoreMenu, 20000);
+        });
+    </script>
+</body>
+
+</html>

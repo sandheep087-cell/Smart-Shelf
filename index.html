@@ -143,9 +143,11 @@
                 <button onclick="switchTab('orders')" id="nav-orders"
                     class="px-3 py-1.5 bg-transparent hover:bg-amber-800/50 text-amber-200 font-semibold rounded-lg text-xs transition">Online
                     Orders</button>
-                <button onclick="switchTab('customer-store')" id="nav-customer-store"
-                    class="px-3 py-1.5 bg-transparent hover:bg-amber-800/50 text-amber-200 font-semibold rounded-lg text-xs transition">Customer
-                    Store</button>
+                <a href="shop.html" target="_blank" id="nav-customer-store"
+                    class="px-3 py-1.5 bg-amber-700/80 hover:bg-amber-600 text-white font-bold rounded-lg text-xs transition flex items-center gap-1 shadow-sm">
+                    <span>🛍️ Customer Store</span>
+                    <span class="text-[10px] opacity-75">↗</span>
+                </a>
             </nav>
 
         </div>
@@ -2234,9 +2236,9 @@
                 }
 
                 // 2. Prepare payload for backend
-                let customerStoreUrl = `${window.location.origin}${window.location.pathname}#customer-store`;
+                let customerStoreUrl = `${window.location.origin}${window.location.pathname.replace(/index\.html$/, '')}shop.html`;
                 if (!window.location.origin || window.location.origin === 'null' || window.location.protocol === 'file:') {
-                    customerStoreUrl = 'https://webgostdebug.github.io/Smart_Shelf/#customer-store';
+                    customerStoreUrl = 'https://webgostdebug.github.io/Smart_Shelf/shop.html';
                 }
 
                 const waUrl = document.getElementById('setting-whatsapp-url')?.value?.trim() || 'https://chat.whatsapp.com/BakeAndBlissCommunity';
