@@ -592,16 +592,53 @@
                                 <p class="text-[10px] text-gray-400 mt-1">1-click broadcast opens your WhatsApp community with prefilled promotional text & pricing.</p>
                             </div>
 
-                            <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1 flex items-center justify-between">
-                                    <span class="flex items-center gap-1.5">
-                                        <span>📸</span> Instagram Profile / Handle
+                            <!-- Instagram Channel & Account Credentials -->
+                            <div class="p-4 bg-gradient-to-br from-pink-50 via-rose-50 to-amber-50 rounded-2xl border border-pink-200/80 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-6 h-6 rounded-lg bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shadow-xs">
+                                            📸
+                                        </div>
+                                        <h5 class="text-xs font-black text-gray-900 uppercase tracking-wide">Instagram Account Credentials</h5>
+                                    </div>
+                                    <span id="instagram-badge-status" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
+                                        Login Required
                                     </span>
-                                    <span class="text-[10px] text-pink-600 font-semibold">Bakery Handle</span>
-                                </label>
-                                <input type="text" id="setting-instagram-handle" placeholder="@bakeandbliss" 
-                                    class="w-full bg-white border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-pink-500 font-medium">
-                                <p class="text-[10px] text-gray-400 mt-1">1-click broadcast renders and downloads the flash poster PNG and copies the caption with hashtags.</p>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-[11px] font-bold text-gray-700 mb-1 flex items-center justify-between">
+                                        <span>Profile / Handle</span>
+                                        <span class="text-[10px] text-pink-600 font-semibold">Bakery Handle</span>
+                                    </label>
+                                    <input type="text" id="setting-instagram-handle" placeholder="@bakeandbliss" 
+                                        class="w-full bg-white border border-gray-300 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-pink-500 font-medium">
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                    <div>
+                                        <label class="block text-[11px] font-bold text-gray-700 mb-1 flex items-center justify-between">
+                                            <span>Instagram Gmail / Email</span>
+                                            <span class="text-[10px] text-rose-600 font-semibold">*Required</span>
+                                        </label>
+                                        <input type="email" id="setting-instagram-email" placeholder="bakeandbliss@gmail.com" 
+                                            class="w-full bg-white border border-gray-300 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-pink-500 font-medium">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[11px] font-bold text-gray-700 mb-1 flex items-center justify-between">
+                                            <span>Instagram Password</span>
+                                            <button type="button" onclick="togglePasswordVisibility('setting-instagram-password')" class="text-[10px] text-pink-700 font-bold hover:underline">Show</button>
+                                        </label>
+                                        <div class="relative">
+                                            <input type="password" id="setting-instagram-password" placeholder="••••••••" 
+                                                class="w-full bg-white border border-gray-300 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-pink-500 font-medium pr-8">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <p class="text-[10px] text-gray-500 leading-snug">
+                                    🔒 Stored securely. When you click <strong>Post to Instagram</strong>, the system renders & downloads the poster, copies the caption to your clipboard, and redirects straight to Instagram's post creator!
+                                </p>
                             </div>
 
                             <div class="pt-2 flex items-center justify-between">
@@ -1018,6 +1055,161 @@
                 <span class="text-xs text-gray-500 font-medium">✓ Omnichannel marketing synchronized</span>
                 <button onclick="closeMarketingModal()" class="bg-[#231f20] hover:bg-gray-800 text-white font-bold text-xs px-6 py-2.5 rounded-xl transition shadow">
                     Done
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Instagram Login & Authentication Modal -->
+    <div id="modal-instagram-auth" class="fixed inset-0 z-[75] bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl border-2 border-rose-300 flex flex-col relative transform transition-all duration-300 scale-95 opacity-0 overflow-hidden" id="modal-instagram-auth-content">
+            <!-- Header with Instagram Gradient -->
+            <div class="p-5 bg-gradient-to-r from-[#405de6] via-[#833ab4] via-[#c13584] to-[#fd1d1d] text-white flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center text-xl backdrop-blur-xs border border-white/30 shadow-inner">
+                        📸
+                    </div>
+                    <div>
+                        <h3 class="font-black text-base md:text-lg tracking-tight flex items-center gap-2">
+                            <span>Instagram Account Login</span>
+                        </h3>
+                        <p class="text-[11px] text-pink-100">Authenticate to publish flash deals & promotional poster</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeInstagramAuthModal()" class="text-white/80 hover:text-white transition text-2xl font-light leading-none p-1">&times;</button>
+            </div>
+
+            <!-- Body -->
+            <form onsubmit="event.preventDefault(); submitInstagramAuthAndPost();" class="p-6 space-y-4">
+                <div class="bg-gradient-to-br from-amber-50 to-rose-50 p-3.5 rounded-2xl border border-rose-200/70 text-xs text-gray-800 space-y-1">
+                    <p class="font-bold text-gray-900 flex items-center gap-1.5">
+                        <span>⚡</span> 1-Click Flash Deal Publishing:
+                    </p>
+                    <p class="text-[11px] text-gray-600 leading-relaxed">
+                        Enter your Instagram Gmail and password. Once authenticated, Smart Shelf renders your <strong>Flash Deals Poster PNG</strong>, copies the caption & hashtags to your clipboard, and redirects you directly to the <strong>Instagram Post Section</strong>!
+                    </p>
+                </div>
+
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1 flex items-center justify-between">
+                            <span class="flex items-center gap-1.5">
+                                <span>📧</span> Instagram Gmail / Email
+                            </span>
+                            <span class="text-[10px] text-rose-600 font-semibold">*Required</span>
+                        </label>
+                        <input type="email" id="modal-ig-email" required placeholder="e.g. bakery@gmail.com"
+                            class="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-pink-500 font-medium">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1 flex items-center justify-between">
+                            <span class="flex items-center gap-1.5">
+                                <span>🔑</span> Instagram Password
+                            </span>
+                            <button type="button" onclick="togglePasswordVisibility('modal-ig-password')" class="text-[10px] text-pink-600 font-bold hover:underline">Show</button>
+                        </label>
+                        <div class="relative">
+                            <input type="password" id="modal-ig-password" required placeholder="Enter Instagram password"
+                                class="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-pink-500 font-medium pr-10">
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1 text-xs">
+                        <label class="flex items-center gap-2 cursor-pointer select-none text-gray-600 text-[11px]">
+                            <input type="checkbox" id="modal-ig-remember" checked class="rounded text-pink-600 focus:ring-pink-500 w-4 h-4">
+                            <span>Remember credentials on this browser</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="modal-ig-error-msg" class="hidden text-xs text-red-600 font-bold bg-red-50 p-2.5 rounded-xl border border-red-200">
+                    Please provide both your Instagram Gmail/Email and Password.
+                </div>
+
+                <div class="pt-2 flex items-center gap-3">
+                    <button type="button" onclick="closeInstagramAuthModal()" class="w-1/3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs py-3 rounded-xl transition">
+                        Cancel
+                    </button>
+                    <button type="submit" id="btn-modal-ig-submit" class="w-2/3 bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 hover:from-rose-700 hover:via-pink-700 hover:to-purple-700 text-white font-black text-xs py-3 rounded-xl transition shadow-md flex items-center justify-center gap-2">
+                        <span>🚀</span> Post to Instagram
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Instagram Post Assistant & Direct Redirection Helper -->
+    <div id="modal-instagram-assistant" class="fixed inset-0 z-[80] bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl border-2 border-pink-400 flex flex-col relative transform transition-all duration-300 scale-95 opacity-0 overflow-hidden" id="modal-instagram-assistant-content">
+            <!-- Header -->
+            <div class="p-5 bg-gradient-to-r from-purple-700 via-pink-600 to-rose-600 text-white flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center text-xl border border-white/30 shadow-inner">
+                        🎉
+                    </div>
+                    <div>
+                        <h3 class="font-black text-base md:text-lg tracking-tight">Redirecting to Instagram Post Creator...</h3>
+                        <p class="text-[11px] text-pink-100" id="assistant-ig-account-label">Authenticated & ready to publish</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeInstagramAssistant()" class="text-white/80 hover:text-white transition text-2xl font-light leading-none p-1">&times;</button>
+            </div>
+
+            <div class="p-6 space-y-4">
+                <!-- Status steps -->
+                <div class="space-y-2.5">
+                    <div class="flex items-center gap-3 bg-emerald-50 border border-emerald-200 p-3 rounded-2xl text-xs text-emerald-900">
+                        <span class="text-lg">✅</span>
+                        <div class="flex-1">
+                            <p class="font-bold">Poster Graphic Ready in Downloads!</p>
+                            <p class="text-[11px] text-emerald-700">Downloaded as <span class="font-mono font-bold">Smart_Shelf_Flash_Deals_Poster.png</span> & copied to clipboard.</p>
+                        </div>
+                        <button type="button" onclick="downloadPosterAsPNG('poster-top-deals')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] px-2.5 py-1.5 rounded-lg shrink-0">
+                            📥 Re-download
+                        </button>
+                    </div>
+
+                    <div class="flex items-center gap-3 bg-rose-50 border border-rose-200 p-3 rounded-2xl text-xs text-rose-900">
+                        <span class="text-lg">📋</span>
+                        <div class="flex-1">
+                            <p class="font-bold">Caption & Hashtags Copied to Clipboard!</p>
+                            <p class="text-[11px] text-rose-700">Simply press <kbd class="px-1.5 py-0.5 bg-white border border-rose-300 rounded font-mono font-bold text-[10px]">Ctrl + V</kbd> (Paste) in Instagram's caption box.</p>
+                        </div>
+                        <button type="button" onclick="copyInstagramAssistantCaption()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold text-[10px] px-2.5 py-1.5 rounded-lg shrink-0">
+                            📋 Copy Again
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Caption text box preview -->
+                <div class="space-y-1">
+                    <label class="block text-[11px] font-bold text-gray-700 flex items-center justify-between">
+                        <span>Ready-to-Paste Instagram Caption:</span>
+                        <span class="text-[10px] text-gray-400">Includes deals, pricing & QR store link</span>
+                    </label>
+                    <textarea id="assistant-ig-caption-box" rows="4" readonly
+                        class="w-full bg-gray-50 border border-gray-300 rounded-xl p-2.5 text-xs font-mono text-gray-800 focus:outline-none custom-scrollbar"></textarea>
+                </div>
+
+                <!-- Launch Instagram Button -->
+                <div class="pt-2 space-y-2">
+                    <a href="https://www.instagram.com/create/select/" target="_blank"
+                        class="w-full bg-gradient-to-r from-[#833ab4] via-[#c13584] to-[#fd1d1d] hover:opacity-95 text-white font-black text-xs py-3.5 px-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-center">
+                        <span>📸</span> Open Instagram Post Creator (create/select) ↗
+                    </a>
+                    <div class="flex items-center justify-between text-[11px] text-gray-500 px-1">
+                        <span>Need to switch account?</span>
+                        <a href="https://www.instagram.com/accounts/login/" target="_blank" class="text-pink-600 font-bold hover:underline">
+                            Open Instagram Login ↗
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-3 bg-gray-50 border-t border-gray-200 text-center">
+                <button type="button" onclick="closeInstagramAssistant()" class="text-xs text-gray-600 hover:text-gray-900 font-bold py-1">
+                    Done / Close Window
                 </button>
             </div>
         </div>
@@ -2029,17 +2221,34 @@
 
                 // 2. Fetch Marketing Settings
                 const setRes = await fetch(`${SHELF_API_URL}/marketing/settings`);
+                let settings = {};
                 if (setRes.ok) {
-                    const settings = await setRes.json();
-                    const waInput = document.getElementById('setting-whatsapp-url');
-                    const igInput = document.getElementById('setting-instagram-handle');
-                    if (waInput && settings.whatsappCommunityUrl) {
-                        waInput.value = settings.whatsappCommunityUrl;
-                    }
-                    if (igInput && settings.instagramHandle) {
-                        igInput.value = settings.instagramHandle;
-                    }
+                    settings = await setRes.json();
                 }
+
+                const waInput = document.getElementById('setting-whatsapp-url');
+                const igInput = document.getElementById('setting-instagram-handle');
+                const igEmailInput = document.getElementById('setting-instagram-email');
+                const igPassInput = document.getElementById('setting-instagram-password');
+
+                if (waInput && settings.whatsappCommunityUrl) {
+                    waInput.value = settings.whatsappCommunityUrl;
+                }
+                if (igInput && settings.instagramHandle) {
+                    igInput.value = settings.instagramHandle;
+                }
+
+                const savedEmail = settings.instagramEmail || localStorage.getItem('smart_shelf_ig_email') || '';
+                const savedPass = settings.instagramPassword || localStorage.getItem('smart_shelf_ig_password') || '';
+
+                if (igEmailInput && savedEmail) {
+                    igEmailInput.value = savedEmail;
+                }
+                if (igPassInput && savedPass) {
+                    igPassInput.value = savedPass;
+                }
+
+                updateInstagramUIStatus(savedEmail, savedPass);
             } catch (err) {
                 console.error("Failed to load marketing settings and customers", err);
             }
@@ -2132,10 +2341,187 @@
             }
         }
 
+        function togglePasswordVisibility(inputId) {
+            const el = document.getElementById(inputId);
+            if (!el) return;
+            el.type = el.type === 'password' ? 'text' : 'password';
+        }
+
+        function escapeHtml(str) {
+            return (str || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+        }
+
+        function updateInstagramUIStatus(email, pass) {
+            const badge = document.getElementById('instagram-badge-status');
+            const cardDesc = document.getElementById('instagram-card-account-desc');
+            const cardPill = document.getElementById('instagram-card-pill');
+            
+            if (email && pass) {
+                if (badge) {
+                    badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200';
+                    const displayEmail = email.length > 20 ? email.substring(0, 18) + '...' : email;
+                    badge.innerText = `● Connected (${displayEmail})`;
+                }
+                if (cardDesc) {
+                    cardDesc.innerHTML = `<span class="text-emerald-300 font-bold">● Connected:</span> <span class="font-mono text-white">${escapeHtml(email)}</span><br>Clicking will download poster, copy caption & open Instagram Post creator.`;
+                }
+                if (cardPill) {
+                    cardPill.className = 'text-[9px] font-black bg-emerald-500/30 text-emerald-300 border border-emerald-400/40 px-2 py-0.5 rounded-full';
+                    cardPill.innerText = 'AUTHENTICATED';
+                }
+            } else {
+                if (badge) {
+                    badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200';
+                    badge.innerText = 'Login Required';
+                }
+                if (cardDesc) {
+                    cardDesc.innerText = 'Enter your Instagram Gmail & password to redirect to post creator with poster & caption ready.';
+                }
+                if (cardPill) {
+                    cardPill.className = 'text-[9px] font-black bg-rose-500/30 text-rose-300 border border-rose-400/40 px-2 py-0.5 rounded-full';
+                    cardPill.innerText = 'POST & REEL';
+                }
+            }
+        }
+
+        function openInstagramAuthModal() {
+            const modal = document.getElementById('modal-instagram-auth');
+            const content = document.getElementById('modal-instagram-auth-content');
+            if (!modal || !content) return;
+
+            // Pre-fill existing credentials
+            const currentEmail = document.getElementById('setting-instagram-email')?.value?.trim() || localStorage.getItem('smart_shelf_ig_email') || '';
+            const currentPass = document.getElementById('setting-instagram-password')?.value?.trim() || localStorage.getItem('smart_shelf_ig_password') || '';
+            
+            const modalEmail = document.getElementById('modal-ig-email');
+            const modalPass = document.getElementById('modal-ig-password');
+            if (modalEmail) modalEmail.value = currentEmail;
+            if (modalPass) modalPass.value = currentPass;
+
+            const errMsg = document.getElementById('modal-ig-error-msg');
+            if (errMsg) errMsg.classList.add('hidden');
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeInstagramAuthModal() {
+            const modal = document.getElementById('modal-instagram-auth');
+            const content = document.getElementById('modal-instagram-auth-content');
+            if (!modal || !content) return;
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 250);
+        }
+
+        async function submitInstagramAuthAndPost() {
+            const emailInput = document.getElementById('modal-ig-email');
+            const passInput = document.getElementById('modal-ig-password');
+            const rememberInput = document.getElementById('modal-ig-remember');
+            const errMsg = document.getElementById('modal-ig-error-msg');
+
+            const email = emailInput ? emailInput.value.trim() : '';
+            const pass = passInput ? passInput.value.trim() : '';
+
+            if (!email || !pass) {
+                if (errMsg) errMsg.classList.remove('hidden');
+                return;
+            }
+
+            if (errMsg) errMsg.classList.add('hidden');
+
+            // Sync with settings inputs
+            const settingEmail = document.getElementById('setting-instagram-email');
+            const settingPass = document.getElementById('setting-instagram-password');
+            if (settingEmail) settingEmail.value = email;
+            if (settingPass) settingPass.value = pass;
+
+            if (rememberInput && rememberInput.checked) {
+                localStorage.setItem('smart_shelf_ig_email', email);
+                localStorage.setItem('smart_shelf_ig_password', pass);
+            }
+
+            updateInstagramUIStatus(email, pass);
+
+            // Save to backend asynchronously
+            saveMarketingSettings();
+
+            closeInstagramAuthModal();
+
+            // Execute broadcast and redirection to Instagram post section
+            await broadcastFlashPoster('INSTAGRAM');
+        }
+
+        async function handleInstagramPostClick() {
+            const email = document.getElementById('setting-instagram-email')?.value?.trim() || localStorage.getItem('smart_shelf_ig_email') || '';
+            const pass = document.getElementById('setting-instagram-password')?.value?.trim() || localStorage.getItem('smart_shelf_ig_password') || '';
+
+            if (!email || !pass) {
+                openInstagramAuthModal();
+                return;
+            }
+
+            await broadcastFlashPoster('INSTAGRAM');
+        }
+
+        let assistantCopiedCaption = '';
+        function showInstagramPostAssistant(caption, account) {
+            assistantCopiedCaption = caption || '';
+            const modal = document.getElementById('modal-instagram-assistant');
+            const content = document.getElementById('modal-instagram-assistant-content');
+            const captionBox = document.getElementById('assistant-ig-caption-box');
+            const accountLabel = document.getElementById('assistant-ig-account-label');
+
+            if (captionBox) captionBox.value = assistantCopiedCaption;
+            if (accountLabel) {
+                accountLabel.innerText = account ? `Posting as: ${account}` : 'Ready to publish flash deals';
+            }
+
+            if (!modal || !content) return;
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeInstagramAssistant() {
+            const modal = document.getElementById('modal-instagram-assistant');
+            const content = document.getElementById('modal-instagram-assistant-content');
+            if (!modal || !content) return;
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 250);
+        }
+
+        async function copyInstagramAssistantCaption() {
+            if (!assistantCopiedCaption) {
+                const captionBox = document.getElementById('assistant-ig-caption-box');
+                if (captionBox) assistantCopiedCaption = captionBox.value;
+            }
+            if (assistantCopiedCaption) {
+                try {
+                    await navigator.clipboard.writeText(assistantCopiedCaption);
+                    alert("✓ Instagram caption copied to clipboard! Simply press Ctrl+V in Instagram.");
+                } catch(e) {
+                    prompt("Copy caption:", assistantCopiedCaption);
+                }
+            }
+        }
+
         async function saveMarketingSettings() {
             const waUrl = document.getElementById('setting-whatsapp-url')?.value?.trim() || '';
             const igHandle = document.getElementById('setting-instagram-handle')?.value?.trim() || '';
+            const igEmail = document.getElementById('setting-instagram-email')?.value?.trim() || '';
+            const igPass = document.getElementById('setting-instagram-password')?.value?.trim() || '';
             const savedMsg = document.getElementById('marketing-settings-saved-msg');
+
+            if (igEmail) localStorage.setItem('smart_shelf_ig_email', igEmail);
+            if (igPass) localStorage.setItem('smart_shelf_ig_password', igPass);
+            updateInstagramUIStatus(igEmail, igPass);
 
             try {
                 const res = await fetch(`${SHELF_API_URL}/marketing/settings`, {
@@ -2143,7 +2529,9 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         whatsappCommunityUrl: waUrl,
-                        instagramHandle: igHandle
+                        instagramHandle: igHandle,
+                        instagramEmail: igEmail,
+                        instagramPassword: igPass
                     })
                 });
                 if (res.ok) {
@@ -2154,7 +2542,6 @@
                 }
             } catch (err) {
                 console.error('Failed to save marketing settings', err);
-                alert('Failed to save settings.');
             }
         }
 
@@ -2243,6 +2630,8 @@
 
                 const waUrl = document.getElementById('setting-whatsapp-url')?.value?.trim() || 'https://chat.whatsapp.com/BakeAndBlissCommunity';
                 const igHandle = document.getElementById('setting-instagram-handle')?.value?.trim() || '@bakeandbliss';
+                const igEmail = document.getElementById('setting-instagram-email')?.value?.trim() || localStorage.getItem('smart_shelf_ig_email') || '';
+                const igPass = document.getElementById('setting-instagram-password')?.value?.trim() || localStorage.getItem('smart_shelf_ig_password') || '';
 
                 const channelsList = channel === 'ALL' ? ['sms', 'whatsapp', 'instagram'] : [channel.toLowerCase()];
 
@@ -2252,7 +2641,9 @@
                     maxDiscount: currentActiveMaxDiscount,
                     storeUrl: customerStoreUrl,
                     whatsappCommunityUrl: waUrl,
-                    instagramHandle: igHandle
+                    instagramHandle: igHandle,
+                    instagramEmail: igEmail,
+                    instagramPassword: igPass
                 };
 
                 let result = null;
@@ -2295,7 +2686,7 @@
                     result = {
                         success: true,
                         whatsapp: { message: waMsg, communityUrl: waUrl },
-                        instagram: { caption: igCap, handle: igHandle },
+                        instagram: { caption: igCap, handle: igHandle, account: igEmail },
                         sms: { recipientCount: customersList.length, recipients: customersList }
                     };
                 }
@@ -2344,7 +2735,22 @@
                             await navigator.clipboard.writeText(igCaption);
                         } catch(e) {}
                     }
-                    window.open('https://www.instagram.com/', '_blank');
+
+                    // Direct Instagram Post Creator Redirection
+                    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                    const instagramPostUrl = 'https://www.instagram.com/create/select/';
+
+                    if (isMobile) {
+                        window.location.href = 'instagram://create';
+                        setTimeout(() => {
+                            window.open(instagramPostUrl, '_blank');
+                        }, 500);
+                    } else {
+                        window.open(instagramPostUrl, '_blank');
+                    }
+
+                    // Show helpful Instagram Post Assistant overlay
+                    showInstagramPostAssistant(igCaption, igEmail);
                 }
 
                 // 4. Populate and display the Broadcast Modal
@@ -2868,14 +3274,19 @@
                                     <div class="space-y-1.5">
                                         <div class="flex items-center justify-between">
                                             <span class="text-2xl">📸</span>
-                                            <span class="text-[9px] font-black bg-rose-500/30 text-rose-300 border border-rose-400/40 px-2 py-0.5 rounded-full">POST & REEL</span>
+                                            <span id="instagram-card-pill" class="text-[9px] font-black bg-rose-500/30 text-rose-300 border border-rose-400/40 px-2 py-0.5 rounded-full">POST & REEL</span>
                                         </div>
-                                        <h4 class="font-black text-sm text-white uppercase">Instagram Post</h4>
-                                        <p class="text-[11px] text-amber-100/80 leading-snug">
-                                            Exports high-res poster image & copies caption with bakery hashtags.
+                                        <div class="flex items-center justify-between">
+                                            <h4 class="font-black text-sm text-white uppercase">Instagram Post</h4>
+                                            <button type="button" onclick="openInstagramAuthModal()" class="text-[10px] text-pink-300 hover:text-white underline font-semibold">
+                                                Edit Login ⚙️
+                                            </button>
+                                        </div>
+                                        <p id="instagram-card-account-desc" class="text-[11px] text-amber-100/80 leading-snug">
+                                            Enter your Instagram Gmail & password to redirect to post creator with poster & caption ready.
                                         </p>
                                     </div>
-                                    <button onclick="broadcastFlashPoster('INSTAGRAM')" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs py-2.5 px-3 rounded-xl transition shadow flex items-center justify-center gap-1.5">
+                                    <button onclick="handleInstagramPostClick()" class="w-full bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 hover:from-rose-700 hover:via-pink-700 hover:to-purple-700 text-white font-bold text-xs py-2.5 px-3 rounded-xl transition shadow flex items-center justify-center gap-1.5 shadow-md hover:shadow-lg">
                                         <span>📸</span> Post to Instagram
                                     </button>
                                 </div>

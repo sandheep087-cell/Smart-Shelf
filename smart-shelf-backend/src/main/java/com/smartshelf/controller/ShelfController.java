@@ -318,6 +318,8 @@ public class ShelfController {
         Map<String, Object> map = new java.util.HashMap<>();
         map.put("whatsappCommunityUrl", settings.getWhatsappCommunityUrl());
         map.put("instagramHandle", settings.getInstagramHandle());
+        map.put("instagramEmail", settings.getInstagramEmail());
+        map.put("instagramPassword", settings.getInstagramPassword());
         return ResponseEntity.ok(map);
     }
 
@@ -334,11 +336,19 @@ public class ShelfController {
         if (payload.containsKey("instagramHandle")) {
             settings.setInstagramHandle(payload.get("instagramHandle"));
         }
+        if (payload.containsKey("instagramEmail")) {
+            settings.setInstagramEmail(payload.get("instagramEmail"));
+        }
+        if (payload.containsKey("instagramPassword")) {
+            settings.setInstagramPassword(payload.get("instagramPassword"));
+        }
         storeSettingsRepository.save(settings);
         Map<String, Object> map = new java.util.HashMap<>();
         map.put("status", "SUCCESS");
         map.put("whatsappCommunityUrl", settings.getWhatsappCommunityUrl());
         map.put("instagramHandle", settings.getInstagramHandle());
+        map.put("instagramEmail", settings.getInstagramEmail());
+        map.put("instagramPassword", settings.getInstagramPassword());
         return ResponseEntity.ok(map);
     }
 

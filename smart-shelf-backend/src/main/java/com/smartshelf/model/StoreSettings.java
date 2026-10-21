@@ -25,6 +25,10 @@ public class StoreSettings {
 
     private String instagramHandle = "@bakeandbliss";
 
+    private String instagramEmail = "";
+
+    private String instagramPassword = "";
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public boolean isIsOpen() { return isOpen; }
@@ -38,4 +42,8 @@ public class StoreSettings {
     public void setWhatsappCommunityUrl(String whatsappCommunityUrl) { this.whatsappCommunityUrl = whatsappCommunityUrl; }
     public String getInstagramHandle() { return instagramHandle; }
     public void setInstagramHandle(String instagramHandle) { this.instagramHandle = instagramHandle; }
+    public String getInstagramEmail() { return instagramEmail; }
+    public void setInstagramEmail(String instagramEmail) { this.instagramEmail = instagramEmail; }
+    public String getInstagramPassword() { return instagramPassword; }
+    public void setInstagramPassword(String instagramPassword) { this.instagramPassword = instagramPassword; }
 }

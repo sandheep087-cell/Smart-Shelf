@@ -34,6 +34,7 @@ public class MarketingBroadcastService {
         String storeUrl = (String) payload.getOrDefault("storeUrl", "http://localhost:8080#customer-store");
         String whatsappCommunityUrl = (String) payload.getOrDefault("whatsappCommunityUrl", "https://chat.whatsapp.com/BakeAndBlissCommunity");
         String instagramHandle = (String) payload.getOrDefault("instagramHandle", "@bakeandbliss");
+        String instagramEmail = (String) payload.getOrDefault("instagramEmail", "");
 
         // Format deals summary for text messages
         StringBuilder dealsText = new StringBuilder();
@@ -128,10 +129,12 @@ public class MarketingBroadcastService {
                     storeUrl
             );
 
-            log.info("[INSTAGRAM BROADCAST] Prepared & Dispatched Flash Poster to Instagram Handle: {}", instagramHandle);
+            log.info("[INSTAGRAM BROADCAST] Prepared & Dispatched Flash Poster for Instagram Account: {} (Handle: {})", 
+                    (instagramEmail != null && !instagramEmail.isBlank() ? instagramEmail : "Authenticated User"), instagramHandle);
 
             Map<String, Object> igResult = new LinkedHashMap<>();
             igResult.put("handle", instagramHandle);
+            igResult.put("account", instagramEmail);
             igResult.put("status", "PUBLISHED");
             igResult.put("caption", instagramCaption);
             igResult.put("posterReady", true);
